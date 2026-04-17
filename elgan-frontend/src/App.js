@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import FleetDashboard from './pages/FleetDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
+import './App.css'; // Vital for your ELGAN styles to load
 
 function App() {
   // Check if user is already logged in via LocalStorage
@@ -21,28 +22,30 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        {/* Public Route: If logged in, skip login and go to dashboard */}
-        <Route 
-          path="/login" 
-          element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} />} 
-        />
+      <div className="App">
+        <Routes>
+          {/* Public Route: If logged in, skip login and go to dashboard */}
+          <Route 
+            path="/login" 
+            element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />} 
+          />
 
-        {/* Protected Fleet Route */}
-        <Route 
-          path="/fleet" 
-          element={user?.role === 'fleet' ? <FleetDashboard user={user} setUser={setUser} /> : <Navigate to="/login" />} 
-        />
+          {/* Protected Fleet Route */}
+          <Route 
+            path="/fleet" 
+            element={user?.role === 'fleet' ? <FleetDashboard user={user} setUser={setUser} /> : <Navigate to="/login" replace />} 
+          />
 
-        {/* Protected Manager Route */}
-        <Route 
-          path="/manager" 
-          element={user?.role === 'manager' ? <ManagerDashboard user={user} setUser={setUser} /> : <Navigate to="/login" />} 
-        />
+          {/* Protected Manager Route */}
+          <Route 
+            path="/manager" 
+            element={user?.role === 'manager' ? <ManagerDashboard user={user} setUser={setUser} /> : <Navigate to="/login" replace />} 
+          />
 
-        {/* Fallback Redirect */}
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
+          {/* Fallback Redirect */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

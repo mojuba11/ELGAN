@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import './App.css';
-import App from './App'; // Make sure this is App, not App.js
+import App from './App';
+import './index.css'; // Tailwind must be here
+import './App.css';   // Custom overrides last
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

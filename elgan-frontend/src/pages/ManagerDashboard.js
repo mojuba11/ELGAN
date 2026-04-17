@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Search, FileText, Calendar, FilterX } from 'lucide-react';
+import { Search, FileText, Calendar, FilterX, ExternalLink } from 'lucide-react';
 
 const ManagerDashboard = () => {
     const [entries, setEntries] = useState([]);
@@ -9,16 +9,21 @@ const ManagerDashboard = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
+    // Dynamically choose between Cloud (Render) or Localhost
+    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
     const fetchEntries = async () => {
         try {
             const token = localStorage.getItem('elgan_token');
-            // Construct the URL with all active filters
-            const url = `http://localhost:5000/api/entries/search?vesselName=${searchTerm}&wasteType=${wasteType}&startDate=${startDate}&endDate=${endDate}`;
+            // Using template literals to safely construct the search query
+            const url = `${API_BASE_URL}/api/entries/search?vesselName=${searchTerm}&wasteType=${wasteType}&startDate=${startDate}&endDate=${endDate}`;
             
-            const res = await axios.get(url, { headers: { 'x-auth-token': token } });
+            const res = await axios.get(url, { 
+                headers: { 'x-auth-token': token } 
+            });
             setEntries(res.data);
         } catch (err) {
-            console.error("Filter Error:", err);
+            console.error("Audit Fetch Error:", err);
         }
     };
 
@@ -35,7 +40,7 @@ const ManagerDashboard = () => {
     };
 
     return (
-        <div className="p-8 bg-slate-50 min-h-screen">
+        <div className="p-8 bg-slate-50 min-h-screen page-fade-in">
             <header className="mb-8">
                 <h1 className="text-3xl font-bold text-slate-800">Compliance & Audit Hub</h1>
                 <p className="text-slate-500 font-medium">Search digitized manifests and original paper records</p>
@@ -43,10 +48,8 @@ const ManagerDashboard = () => {
 
             {/* ADVANCED FILTER BAR */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200 items-end">
-                
-                {/* Search Vessel */}
-                <div className="flex flex-col">
-                    <label className="text-xs font-bold text-slate-400 uppercase mb-2">Vessel / IMO</label>
+                <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Vessel / IMO</label>
                     <div className="relative">
                         <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
                         <input 
@@ -58,11 +61,10 @@ const ManagerDashboard = () => {
                     </div>
                 </div>
 
-                {/* Waste Type */}
-                <div className="flex flex-col">
-                    <label className="text-xs font-bold text-slate-400 uppercase mb-2">Waste Category</label>
+                <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Waste Category</label>
                     <select 
-                        className="border p-2 rounded-lg text-sm bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded-lg text-sm bg-white outline-none focus:ring-2 focus:ring-blue-500"
                         value={wasteType}
                         onChange={(e) => setWasteType(e.target.value)}
                     >
@@ -74,39 +76,87 @@ const ManagerDashboard = () => {
                     </select>
                 </div>
 
-                {/* Start Date */}
-                <div className="flex flex-col">
-                    <label className="text-xs font-bold text-slate-400 uppercase mb-2">From Date</label>
+                <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">From Date</label>
                     <input 
                         type="date" 
-                        className="border p-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
                     />
                 </div>
 
-                {/* End Date */}
-                <div className="flex flex-col">
-                    <label className="text-xs font-bold text-slate-400 uppercase mb-2">To Date</label>
+                <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">To Date</label>
                     <input 
                         type="date" 
-                        className="border p-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border p-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
                     />
                 </div>
 
-                {/* Reset Button */}
                 <button 
                     onClick={resetFilters}
-                    className="flex items-center justify-center bg-slate-100 text-slate-600 p-2 rounded-lg hover:bg-slate-200 transition font-medium text-sm"
+                    className="flex items-center justify-center bg-slate-100 text-slate-600 p-2 rounded-lg hover:bg-slate-200 transition font-medium text-sm h-[38px]"
                 >
-                    <FilterX size={18} className="mr-2" /> Reset
+                    <FilterX size={18} className="mr-2" /> Reset Filters
                 </button>
             </div>
 
-            {/* RESULTS LIST (Using the same table logic from before) */}
-            {/* ... table code goes here ... */}
+            {/* RESULTS TABLE */}
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                    <thead className="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th className="p-4 text-xs font-bold text-slate-500 uppercase">Date</th>
+                            <th className="p-4 text-xs font-bold text-slate-500 uppercase">Vessel Name</th>
+                            <th className="p-4 text-xs font-bold text-slate-500 uppercase">Waste Type</th>
+                            <th className="p-4 text-xs font-bold text-slate-500 uppercase">Quantity</th>
+                            <th className="p-4 text-xs font-bold text-slate-500 uppercase text-center">Manifest</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                        {entries.length > 0 ? entries.map((entry) => (
+                            <tr key={entry._id} className="hover:bg-blue-50/50 transition-colors">
+                                <td className="p-4 text-sm text-slate-600">
+                                    {new Date(entry.date).toLocaleDateString()}
+                                </td>
+                                <td className="p-4 text-sm font-semibold text-slate-800 uppercase">{entry.vesselName}</td>
+                                <td className="p-4">
+                                    <span className="px-2 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 uppercase">
+                                        {entry.wasteType}
+                                    </span>
+                                </td>
+                                <td className="p-4 text-sm font-medium text-slate-700">{entry.quantity} {entry.unit}</td>
+                                <td className="p-4 text-center">
+                                    {entry.manifestUrl ? (
+                                        <a 
+                                            href={entry.manifestUrl} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm"
+                                        >
+                                            <FileText size={16} className="mr-1" /> View PDF <ExternalLink size={12} className="ml-1" />
+                                        </a>
+                                    ) : (
+                                        <span className="text-slate-400 text-xs italic">No scan uploaded</span>
+                                    )}
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr>
+                                <td colSpan="5" className="p-12 text-center text-slate-400 italic">
+                                    No records found matching your filters.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
+
+// CRITICAL: This was likely the cause of your Vercel Build Error
+export default ManagerDashboard;

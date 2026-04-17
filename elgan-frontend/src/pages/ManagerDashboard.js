@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Search, FileText, Calendar, FilterX, ExternalLink } from 'lucide-react';
+import { Search, FileText, FilterX, ExternalLink } from 'lucide-react';
 
 const ManagerDashboard = () => {
     const [entries, setEntries] = useState([]);
@@ -9,13 +9,12 @@ const ManagerDashboard = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
-    // Dynamically choose between Cloud (Render) or Localhost
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-    const fetchEntries = async () => {
+    // useCallback prevents the "missing dependency" warning and infinite loops
+    const fetchEntries = useCallback(async () => {
         try {
             const token = localStorage.getItem('elgan_token');
-            // Using template literals to safely construct the search query
             const url = `${API_BASE_URL}/api/entries/search?vesselName=${searchTerm}&wasteType=${wasteType}&startDate=${startDate}&endDate=${endDate}`;
             
             const res = await axios.get(url, { 
@@ -25,12 +24,11 @@ const ManagerDashboard = () => {
         } catch (err) {
             console.error("Audit Fetch Error:", err);
         }
-    };
+    }, [API_BASE_URL, searchTerm, wasteType, startDate, endDate]);
 
-    // Trigger fetch whenever any filter value changes
     useEffect(() => {
         fetchEntries();
-    }, [searchTerm, wasteType, startDate, endDate]);
+    }, [fetchEntries]);
 
     const resetFilters = () => {
         setSearchTerm('');
@@ -40,13 +38,12 @@ const ManagerDashboard = () => {
     };
 
     return (
-        <div className="p-8 bg-slate-50 min-h-screen page-fade-in">
+        <div className="p-8 bg-slate-50 min-h-screen">
             <header className="mb-8">
                 <h1 className="text-3xl font-bold text-slate-800">Compliance & Audit Hub</h1>
                 <p className="text-slate-500 font-medium">Search digitized manifests and original paper records</p>
             </header>
 
-            {/* ADVANCED FILTER BAR */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200 items-end">
                 <div>
                     <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Vessel / IMO</label>
@@ -104,7 +101,6 @@ const ManagerDashboard = () => {
                 </button>
             </div>
 
-            {/* RESULTS TABLE */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-slate-50 border-b border-slate-200">
@@ -131,24 +127,17 @@ const ManagerDashboard = () => {
                                 <td className="p-4 text-sm font-medium text-slate-700">{entry.quantity} {entry.unit}</td>
                                 <td className="p-4 text-center">
                                     {entry.manifestUrl ? (
-                                        <a 
-                                            href={entry.manifestUrl} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm"
-                                        >
+                                        <a href={entry.manifestUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm">
                                             <FileText size={16} className="mr-1" /> View PDF <ExternalLink size={12} className="ml-1" />
                                         </a>
                                     ) : (
-                                        <span className="text-slate-400 text-xs italic">No scan uploaded</span>
+                                        <span className="text-slate-400 text-xs italic">No scan</span>
                                     )}
                                 </td>
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan="5" className="p-12 text-center text-slate-400 italic">
-                                    No records found matching your filters.
-                                </td>
+                                <td colSpan="5" className="p-12 text-center text-slate-400 italic">No records found.</td>
                             </tr>
                         )}
                     </tbody>
@@ -158,5 +147,4 @@ const ManagerDashboard = () => {
     );
 };
 
-// CRITICAL: This was likely the cause of your Vercel Build Error
 export default ManagerDashboard;

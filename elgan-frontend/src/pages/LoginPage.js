@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Loader2 } from 'lucide-react';
+import { Lock, User, Loader2 } from 'lucide-react'; // Changed Mail to User for better context
 import axios from 'axios';
 
 const LoginPage = ({ setUser }) => {
-  const [username, setUsername] = useState(''); // Changed from email to username to match backend
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Switch between Local and Production URLs automatically
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,22 +19,23 @@ const LoginPage = ({ setUser }) => {
     setError('');
 
     try {
-      // 1. Send request to your Head of IT's backend
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      // 1. Send request to the Cloud (Render) or Localhost
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         username,
         password
       });
 
-      // 2. Extract user and token from response
+      // 2. Extract user and token
       const { user, token } = response.data;
 
-      // 3. Store token in LocalStorage for persistent sessions
+      // 3. Store in LocalStorage (persistent sessions)
       localStorage.setItem('elgan_token', token);
+      localStorage.setItem('elgan_user', JSON.stringify(user));
 
       // 4. Update Global App State
       setUser(user);
 
-      // 5. Navigate based on Role returned from MongoDB
+      // 5. Navigate based on Role
       if (user.role === 'manager') {
         navigate('/manager');
       } else {
@@ -64,7 +68,7 @@ const LoginPage = ({ setUser }) => {
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-1">Username</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3.5 text-slate-400" size={18} />
+              <User className="absolute left-3 top-3.5 text-slate-400" size={18} />
               <input 
                 type="text" 
                 required

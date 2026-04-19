@@ -35,22 +35,27 @@ const LoginPage = ({ setUser }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 px-4 font-sans">
-      <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md border border-slate-200">
+    <div className="flex items-center justify-center min-h-screen bg-slate-100 px-4 font-sans">
+      <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-200">
+        {/* --- HEADER --- */}
         <div className="text-center mb-8">
-          <div className="inline-block bg-blue-900 text-white px-4 py-1 rounded-md mb-4 text-xs font-black tracking-[0.2em]">
-            
+          <div className="inline-block bg-blue-900 text-white px-4 py-1 rounded-md mb-4 text-[10px] font-black tracking-[0.2em] uppercase">
+            Official Portal
           </div>
-          <h1 className="text-4xl font-black text-blue-900 tracking-tighter">ELGAN <span className="text-blue-600"></span></h1>
-          <p className="text-slate-500 mt-2 font-medium">Offshore Waste Management Portal</p>
+          <h1 className="text-4xl font-black text-blue-900 tracking-tighter uppercase">
+            Elgan <span className="text-blue-600">Osm</span>
+          </h1>
+          <p className="text-slate-500 mt-2 text-sm font-medium">Offshore Waste Management</p>
         </div>
 
+        {/* --- ERROR DISPLAY --- */}
         {error && (
-          <div className="mb-6 p-3 bg-red-50 text-red-700 text-xs font-bold border-l-4 border-red-500 flex items-center uppercase tracking-wide">
+          <div className="mb-6 p-3 bg-red-50 text-red-700 text-[11px] font-bold border-l-4 border-red-500 flex items-center uppercase tracking-wide">
             {error}
           </div>
         )}
 
+        {/* --- LOGIN FORM --- */}
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Username</label>
@@ -60,7 +65,7 @@ const LoginPage = ({ setUser }) => {
                 type="text" 
                 required 
                 className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-700" 
-                placeholder="Manager or Fleet ID" 
+                placeholder="Enter Username" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)} 
               />
@@ -97,16 +102,17 @@ const LoginPage = ({ setUser }) => {
             )}
           </button>
         </form>
-      </div>
 
-      <footer className="mt-8 text-center">
-        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
-          © 2026 Elgan Integrated Ltd.
-        </p>
-        <p className="text-slate-300 text-[9px] mt-1 font-medium italic">
-          Secure Offshore Asset Management v2.0
-        </p>
-      </footer>
+        {/* --- FOOTER INSIDE CARD --- */}
+        <div className="mt-10 pt-6 border-t border-slate-100 text-center">
+          <p className="text-slate-400 text-[9px] font-bold uppercase tracking-[0.15em]">
+            © 2026 Elgan Integrated Ltd.
+          </p>
+          <p className="text-slate-300 text-[8px] mt-1 font-medium italic">
+            Secure Offshore Asset Management v2.0
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Added for stable logout
 import { 
     Search, FileText, FilterX, 
     LogOut, User, BarChart3, Ship, Trash2, DollarSign, AlertCircle
 } from 'lucide-react';
 
 const ManagerDashboard = () => {
+    const navigate = useNavigate(); // Initialize navigation
     const [entries, setEntries] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [wasteType, setWasteType] = useState('');
@@ -15,12 +17,15 @@ const ManagerDashboard = () => {
 
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-    // Logout Functionality
+    // --- SECURE LOGOUT ---
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to log out?")) {
-            localStorage.removeItem('elgan_token');
-            localStorage.removeItem('elgan_user_name');
-            window.location.href = '/login';
+            // Clear all auth data
+            localStorage.clear(); 
+            // Redirect to login using the Router
+            navigate('/login');
+            // Force reload to ensure all memory states are wiped
+            window.location.reload(); 
         }
     };
 
@@ -79,14 +84,16 @@ const ManagerDashboard = () => {
                     <div className="bg-blue-600 p-2 rounded-lg">
                         <BarChart3 className="text-white" size={20} />
                     </div>
-                    <span className="text-xl font-bold text-slate-800 tracking-tight">ELGAN <span className="text-blue-600">OPERATION DASHBOARD</span></span>
+                    <span className="text-xl font-bold text-slate-800 tracking-tight">
+                        ELGAN <span className="text-blue-600 uppercase">Operations</span>
+                    </span>
                 </div>
                 
                 <div className="flex items-center space-x-6">
                     <div className="flex items-center space-x-3 border-r pr-6 border-slate-200">
                         <div className="text-right">
                             <p className="text-sm font-bold text-slate-800">{userName}</p>
-                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Administrator Access</p>
+                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest text-right">Administrator Access</p>
                         </div>
                         <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200">
                             <User size={20} />
@@ -156,7 +163,7 @@ const ManagerDashboard = () => {
                         <div className="relative">
                             <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
                             <input 
-                                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-300" 
+                                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-300 font-medium" 
                                 placeholder="Search Vessel..." 
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}

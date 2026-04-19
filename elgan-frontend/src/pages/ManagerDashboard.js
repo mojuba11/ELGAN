@@ -79,7 +79,7 @@ const ManagerDashboard = () => {
                     <div className="bg-blue-600 p-2 rounded-lg">
                         <BarChart3 className="text-white" size={20} />
                     </div>
-                    <span className="text-xl font-bold text-slate-800 tracking-tight">ELGAN <span className="text-blue-600">OSM</span></span>
+                    <span className="text-xl font-bold text-slate-800 tracking-tight">ELGAN <span className="text-blue-600">OPERATION DASHBOARD</span></span>
                 </div>
                 
                 <div className="flex items-center space-x-6">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { 
-    Search, FileText, FilterX, ExternalLink, 
+    Search, FileText, FilterX, 
     LogOut, User, BarChart3, Ship, Trash2, DollarSign, AlertCircle
 } from 'lucide-react';
 
@@ -19,7 +19,7 @@ const ManagerDashboard = () => {
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to log out?")) {
             localStorage.removeItem('elgan_token');
-            localStorage.removeItem('elgan_user_name'); // Clear user name if stored
+            localStorage.removeItem('elgan_user_name');
             window.location.href = '/login';
         }
     };
@@ -41,12 +41,11 @@ const ManagerDashboard = () => {
 
     useEffect(() => {
         fetchEntries();
-        // Set dynamic user name if available
         const storedName = localStorage.getItem('elgan_user_name');
         if (storedName) setUserName(storedName);
     }, [fetchEntries]);
 
-    // Handle Entry Deletion (New Executive Feature)
+    // Handle Entry Deletion
     const handleDelete = async (id) => {
         if (window.confirm("CRITICAL: Are you sure you want to delete this record? This cannot be undone.")) {
             try {
@@ -54,7 +53,7 @@ const ManagerDashboard = () => {
                 await axios.delete(`${API_BASE_URL}/api/entries/${id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                fetchEntries(); // Refresh list
+                fetchEntries();
             } catch (err) {
                 alert("Error deleting record. Check permissions.");
             }
@@ -87,7 +86,7 @@ const ManagerDashboard = () => {
                     <div className="flex items-center space-x-3 border-r pr-6 border-slate-200">
                         <div className="text-right">
                             <p className="text-sm font-bold text-slate-800">{userName}</p>
-                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Administrator</p>
+                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Administrator Access</p>
                         </div>
                         <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200">
                             <User size={20} />
@@ -104,7 +103,6 @@ const ManagerDashboard = () => {
             </nav>
 
             <main className="p-8 max-w-7xl mx-auto">
-                {/* --- HEADER --- */}
                 <header className="mb-8 flex justify-between items-end">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Compliance & Audit Hub</h1>

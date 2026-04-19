@@ -43,7 +43,7 @@ const LoginPage = ({ setUser }) => {
             Official Portal
           </div>
           <h1 className="text-4xl font-black text-blue-900 tracking-tighter uppercase">
-            Elgan <span className="text-blue-600">Osm</span>
+            Elgan <span className="text-blue-600">Integrated</span>
           </h1>
           <p className="text-slate-500 mt-2 text-sm font-medium">Offshore Waste Management</p>
         </div>

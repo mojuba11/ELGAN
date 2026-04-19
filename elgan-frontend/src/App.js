@@ -3,13 +3,18 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import FleetDashboard from './pages/FleetDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
-import './App.css'; // Vital for your ELGAN styles to load
+import EntryForm from './pages/EntryForm'; // Ensure this matches your filename
+import './App.css'; 
 
 function App() {
   // Check if user is already logged in via LocalStorage
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('elgan_user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      return null;
+    }
   });
 
   // Sync state to local storage if user changes (e.g., logging out)
@@ -17,6 +22,7 @@ function App() {
     if (!user) {
       localStorage.removeItem('elgan_user');
       localStorage.removeItem('elgan_token');
+      localStorage.removeItem('elgan_user_name');
     }
   }, [user]);
 
@@ -24,16 +30,22 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Public Route: If logged in, skip login and go to dashboard */}
+          {/* Public Route: Login */}
           <Route 
             path="/login" 
             element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />} 
           />
 
-          {/* Protected Fleet Route */}
+          {/* Protected Fleet Routes */}
           <Route 
             path="/fleet" 
             element={user?.role === 'fleet' ? <FleetDashboard user={user} setUser={setUser} /> : <Navigate to="/login" replace />} 
+          />
+
+          {/* NEW: Protected Entry Form Route */}
+          <Route 
+            path="/entry" 
+            element={user?.role === 'fleet' ? <EntryForm /> : <Navigate to="/login" replace />} 
           />
 
           {/* Protected Manager Route */}

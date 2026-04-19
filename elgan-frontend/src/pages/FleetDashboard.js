@@ -86,7 +86,7 @@ const FleetDashboard = () => {
                 <div className="flex justify-between items-end mb-8">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Operations Log</h1>
-                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-blue-200 decoration-4">Digital manifest tracking for offshore assets.</p>
+                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-blue-200 decoration-4">Digital Waste Collection tracking for offshore assets.</p>
                     </div>
                     <button 
                         onClick={() => navigate('/entry')}

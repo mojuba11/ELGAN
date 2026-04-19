@@ -39,10 +39,10 @@ const LoginPage = ({ setUser }) => {
       <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md border border-slate-200">
         <div className="text-center mb-8">
           <div className="inline-block bg-blue-900 text-white px-4 py-1 rounded-md mb-4 text-xs font-black tracking-[0.2em]">
-            OFFSHORE LOGISTICS
+            
           </div>
-          <h1 className="text-4xl font-black text-blue-900 tracking-tighter">ELGAN <span className="text-blue-600">OSM</span></h1>
-          <p className="text-slate-500 mt-2 font-medium">Waste Management Portal</p>
+          <h1 className="text-4xl font-black text-blue-900 tracking-tighter">ELGAN <span className="text-blue-600"></span></h1>
+          <p className="text-slate-500 mt-2 font-medium">Offshore Waste Management Portal</p>
         </div>
 
         {error && (

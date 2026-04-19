@@ -1,54 +1,181 @@
-import React from 'react';
-import { Plus, Download, Edit, Send } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import { 
+    Plus, Download, Edit, Send, LogOut, User, 
+    Ship, ClipboardCheck, Clock, HardDrive, BarChart3 
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [entries, setEntries] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Fleet Operations Log</h1>
-          <p className="text-gray-600">Manage and track digitized waste manifests</p>
+    // Logout Functionality
+    const handleLogout = () => {
+        if (window.confirm("Confirm logout from Fleet Operations?")) {
+            localStorage.removeItem('elgan_token');
+            navigate('/login');
+        }
+    };
+
+    // Fetch personal fleet entries
+    const fetchMyEntries = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('elgan_token');
+            // Assuming your backend has a route for user-specific entries or we filter all
+            const res = await axios.get(`${API_BASE_URL}/api/entries`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setEntries(res.data);
+            setLoading(false);
+        } catch (err) {
+            console.error("Fleet Data Error:", err);
+            setLoading(false);
+        }
+    }, [API_BASE_URL]);
+
+    useEffect(() => {
+        fetchMyEntries();
+    }, [fetchMyEntries]);
+
+    // Derived Stats for Operator
+    const totalSubmissions = entries.length;
+    const recentVol = entries.slice(0, 5).reduce((acc, curr) => acc + (curr.volume || 0), 0);
+
+    return (
+        <div className="bg-slate-50 min-h-screen font-sans">
+            {/* --- EXECUTIVE TOP BAR --- */}
+            <nav className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10 shadow-sm">
+                <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/')}>
+                    <div className="bg-blue-600 p-2 rounded-lg">
+                        <BarChart3 className="text-white" size={20} />
+                    </div>
+                    <span className="text-xl font-bold text-slate-800 tracking-tight">ELGAN <span className="text-blue-600">OSM</span></span>
+                </div>
+                
+                <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-3 border-r pr-6 border-slate-200">
+                        <div className="text-right">
+                            <p className="text-sm font-bold text-slate-800">Fleet Operator</p>
+                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Field Personnel</p>
+                        </div>
+                        <div className="bg-slate-100 p-2 rounded-full text-slate-600">
+                            <User size={20} />
+                        </div>
+                    </div>
+                    
+                    <button 
+                        onClick={handleLogout}
+                        className="flex items-center text-slate-500 hover:text-red-600 transition-colors font-bold text-sm"
+                    >
+                        <LogOut size={18} className="mr-2" /> Logout
+                    </button>
+                </div>
+            </nav>
+
+            <main className="p-8 max-w-7xl mx-auto">
+                {/* --- HEADER --- */}
+                <div className="flex justify-between items-end mb-8">
+                    <div>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Fleet Operations Log</h1>
+                        <p className="text-slate-500 font-medium mt-1">Manage and track digitized waste manifests for vessel assets.</p>
+                    </div>
+                    <button 
+                        onClick={() => navigate('/entry')}
+                        className="flex items-center bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-200 font-bold"
+                    >
+                        <Plus size={20} className="mr-2" /> File New Entry
+                    </button>
+                </div>
+
+                {/* --- QUICK STATS --- */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit mb-4"><Ship size={24} /></div>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">My Total Logs</p>
+                        <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{totalSubmissions}</h3>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="p-3 bg-orange-50 text-orange-600 rounded-xl w-fit mb-4"><Clock size={24} /></div>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Pending Verification</p>
+                        <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">0</h3>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl w-fit mb-4"><HardDrive size={24} /></div>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Recent Volume (m³)</p>
+                        <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{recentVol}</h3>
+                    </div>
+                </div>
+
+                {/* --- RECENT ACTIVITY TABLE --- */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <h2 className="font-black text-slate-800 text-sm uppercase tracking-tighter">Operational History</h2>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Last 20 Records</span>
+                    </div>
+                    
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Vessel Asset</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Timestamp</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Waste Type</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {loading ? (
+                                    <tr><td colSpan="5" className="p-10 text-center text-slate-400 animate-pulse">Loading logs...</td></tr>
+                                ) : entries.length > 0 ? entries.map((entry) => (
+                                    <tr key={entry._id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="p-4 font-black text-slate-800 uppercase text-sm tracking-tighter">{entry.vesselName}</td>
+                                        <td className="p-4 text-xs font-medium text-slate-500">
+                                            {new Date(entry.entryDate || entry.date).toLocaleDateString()}
+                                        </td>
+                                        <td className="p-4">
+                                            <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest border border-blue-100">
+                                                {entry.wasteType}
+                                            </span>
+                                        </td>
+                                        <td className="p-4">
+                                            <div className="flex items-center text-green-600 text-[10px] font-black uppercase tracking-widest">
+                                                <ClipboardCheck size={14} className="mr-1" /> Digitized
+                                            </div>
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <div className="flex justify-end space-x-2">
+                                                <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                                    <Edit size={16}/>
+                                                </button>
+                                                <button className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
+                                                    <Download size={16}/>
+                                                </button>
+                                                <button className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">
+                                                    <Send size={16}/>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )) : (
+                                    <tr>
+                                        <td colSpan="5" className="p-20 text-center text-slate-400 italic">
+                                            No logs submitted yet. Click "File New Entry" to begin.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
         </div>
-        <button 
-          onClick={() => navigate('/entry')}
-          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          <Plus size={20} className="mr-2" /> File Entry Again
-        </button>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
-            <tr>
-              <th className="p-4">Vessel Name</th>
-              <th className="p-4">Date Entered</th>
-              <th className="p-4">Waste Type</th>
-              <th className="p-4">Status</th>
-              <th className="p-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {/* Sample Row */}
-            <tr>
-              <td className="p-4 font-medium">MT ELGAN EXPLORER</td>
-              <td className="p-4">2026-04-17</td>
-              <td className="p-4">Oily Sludge</td>
-              <td className="p-4"><span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">Verified</span></td>
-              <td className="p-4 text-right space-x-3">
-                <button className="text-blue-600 hover:text-blue-800"><Edit size={18}/></button>
-                <button className="text-gray-600 hover:text-gray-800"><Download size={18}/></button>
-                <button className="text-green-600 hover:text-green-800"><Send size={18}/></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default FleetDashboard;

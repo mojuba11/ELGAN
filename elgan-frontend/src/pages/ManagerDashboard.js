@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
     Search, FileText, FilterX, 
     LogOut, User, BarChart3, Trash2, Anchor, CheckCircle2
-} from 'lucide-react'; // Cleaned unused imports: Ship, DollarSign, AlertCircle
+} from 'lucide-react';
 
 const ManagerDashboard = () => {
     const navigate = useNavigate();
@@ -17,11 +17,13 @@ const ManagerDashboard = () => {
 
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+    // --- SECURE MOBILE-FRIENDLY LOGOUT ---
     const handleLogout = () => {
-        if (window.confirm("Are you sure you want to log out?")) {
+        const confirmLogout = window.confirm("Are you sure you want to log out?");
+        if (confirmLogout) {
             localStorage.clear(); 
             navigate('/login');
-            window.location.reload(); 
+            window.location.href = '/login'; // Double-force redirect for mobile stability
         }
     };
 
@@ -46,7 +48,7 @@ const ManagerDashboard = () => {
     }, [fetchEntries]);
 
     const handleDelete = async (id) => {
-        if (window.confirm("CRITICAL: Are you sure you want to delete this record? This cannot be undone.")) {
+        if (window.confirm("CRITICAL: Are you sure you want to delete this record?")) {
             try {
                 const token = localStorage.getItem('elgan_token');
                 await axios.delete(`${API_BASE_URL}/api/entries/${id}`, {
@@ -71,71 +73,76 @@ const ManagerDashboard = () => {
 
     return (
         <div className="bg-slate-50 min-h-screen font-sans">
-            <nav className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10 shadow-sm">
+            {/* --- EXECUTIVE TOP BAR (Mobile Optimized) --- */}
+            <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-2">
-                    <div className="bg-blue-600 p-2 rounded-lg">
-                        <BarChart3 className="text-white" size={20} />
+                    <div className="bg-blue-600 p-1.5 rounded-lg">
+                        <BarChart3 className="text-white" size={18} />
                     </div>
-                    <span className="text-xl font-bold text-slate-800 tracking-tight">
-                        ELGAN <span className="text-blue-600 uppercase">Operations</span>
+                    <span className="text-lg md:text-xl font-bold text-slate-800 tracking-tight">
+                        ELGAN <span className="hidden md:inline text-blue-600 uppercase">Operations</span>
                     </span>
                 </div>
                 
-                <div className="flex items-center space-x-6">
-                    <div className="flex items-center space-x-3 border-r pr-6 border-slate-200">
+                <div className="flex items-center space-x-2 md:space-x-6">
+                    <div className="hidden sm:flex items-center space-x-3 border-r pr-4 border-slate-200">
                         <div className="text-right">
-                            <p className="text-sm font-bold text-slate-800">{userName}</p>
-                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest text-right">Administrator Access</p>
+                            <p className="text-xs font-bold text-slate-800 line-clamp-1">{userName}</p>
+                            <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Admin Access</p>
                         </div>
                         <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200">
-                            <User size={20} />
+                            <User size={18} />
                         </div>
                     </div>
                     
-                    <button onClick={handleLogout} className="flex items-center text-slate-500 hover:text-red-600 transition-colors font-bold text-sm">
-                        <LogOut size={18} className="mr-2" /> Logout
+                    <button 
+                        onClick={handleLogout} 
+                        className="flex items-center justify-center bg-red-50 md:bg-transparent text-red-600 md:text-slate-500 hover:text-red-700 p-2 md:p-0 rounded-lg transition-colors font-bold text-sm"
+                    >
+                        <LogOut size={20} className="md:mr-2" /> 
+                        <span className="hidden md:inline">Logout</span>
                     </button>
                 </div>
             </nav>
 
-            <main className="p-8 max-w-[1600px] mx-auto">
-                <header className="mb-8 flex justify-between items-end">
+            <main className="p-4 md:p-8 max-w-[1600px] mx-auto">
+                <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Compliance & Audit Hub</h1>
-                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-blue-200 decoration-4 text-sm">Comprehensive Offshore Waste Collection Tracking.</p>
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Compliance & Audit Hub</h1>
+                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-blue-200 decoration-4 text-xs md:text-sm">Comprehensive Offshore Waste Collection Tracking.</p>
                     </div>
-                    <div className="text-xs font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                    <div className="text-[10px] font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
                         System Status: <span className="text-green-600 font-bold">Live</span>
                     </div>
                 </header>
 
                 {/* --- STATS CARDS --- */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Assets Handled</p>
-                        <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{entries.length} Vessels</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
+                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Assets</p>
+                        <h3 className="text-xl md:text-3xl font-bold text-slate-800 tracking-tighter">{entries.length} Vessels</h3>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Revenue (USD)</p>
-                        <h3 className="text-3xl font-bold text-emerald-600 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
+                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Revenue (USD)</p>
+                        <h3 className="text-xl md:text-3xl font-bold text-emerald-600 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Volume Processed</p>
-                        <h3 className="text-3xl font-bold text-orange-600 tracking-tighter">{totalVolume.toLocaleString()} m³</h3>
+                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Volume</p>
+                        <h3 className="text-xl md:text-3xl font-bold text-orange-600 tracking-tighter">{totalVolume.toLocaleString()} m³</h3>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Digitization Rate</p>
-                        <h3 className="text-3xl font-bold text-blue-600 tracking-tighter">100%</h3>
+                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Digitization</p>
+                        <h3 className="text-xl md:text-3xl font-bold text-blue-600 tracking-tighter">100%</h3>
                     </div>
                 </div>
 
                 {/* --- FILTERS --- */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 items-end">
-                    <div className="col-span-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-8 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 items-end">
+                    <div className="md:col-span-1">
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Vessel Search</label>
                         <div className="relative">
                             <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
-                            <input className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Search Vessel/IMO..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            <input className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Name/IMO..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                     </div>
                     <div>
@@ -150,13 +157,13 @@ const ManagerDashboard = () => {
                     </div>
                     <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">From Arrival</label>
-                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     </div>
                     <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">To Arrival</label>
-                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
-                    <button onClick={resetFilters} className="bg-slate-900 text-white p-2 rounded-xl font-black text-[10px] uppercase h-[40px] hover:bg-black transition">
+                    <button onClick={resetFilters} className="bg-slate-900 text-white p-2 rounded-xl font-black text-[10px] uppercase h-[40px] hover:bg-black transition shadow-lg active:scale-95">
                        <FilterX size={16} className="inline mr-2" /> Reset Audit
                     </button>
                 </div>
@@ -164,7 +171,7 @@ const ManagerDashboard = () => {
                 {/* --- PROFESSIONAL LOGISTICS TABLE --- */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left border-collapse min-w-[1000px]">
                             <thead>
                                 <tr className="bg-slate-50 border-b border-slate-100">
                                     <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Asset Details</th>
@@ -220,7 +227,7 @@ const ManagerDashboard = () => {
                                                 ) : (
                                                     <div className="p-2 bg-slate-100 text-slate-300 rounded-lg"><FilterX size={14} /></div>
                                                 )}
-                                                <button onClick={() => handleDelete(entry._id)} className="p-2 text-slate-300 border border-slate-200 rounded-lg hover:text-red-600 hover:border-red-200 transition">
+                                                <button onClick={() => handleDelete(entry._id)} className="p-2 text-slate-300 border border-slate-200 rounded-lg hover:text-red-600 hover:border-red-200 transition active:scale-90">
                                                     <Trash2 size={14} />
                                                 </button>
                                             </div>
@@ -230,9 +237,7 @@ const ManagerDashboard = () => {
                                     <tr>
                                         <td colSpan="7" className="p-24 text-center">
                                             <div className="flex flex-col items-center">
-                                                <div className="p-4 bg-slate-50 rounded-full mb-4">
-                                                    <Search size={40} className="text-slate-200" />
-                                                </div>
+                                                <Search size={40} className="text-slate-200 mb-2" />
                                                 <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">No matching vessel records found</p>
                                             </div>
                                         </td>

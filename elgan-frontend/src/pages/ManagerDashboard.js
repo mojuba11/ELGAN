@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
     Search, FileText, FilterX, 
-    LogOut, User, BarChart3, Ship, Trash2, DollarSign, AlertCircle, Anchor, CheckCircle2
-} from 'lucide-react';
+    LogOut, User, BarChart3, Trash2, Anchor, CheckCircle2
+} from 'lucide-react'; // Cleaned unused imports: Ship, DollarSign, AlertCircle
 
 const ManagerDashboard = () => {
     const navigate = useNavigate();
@@ -102,7 +102,7 @@ const ManagerDashboard = () => {
                 <header className="mb-8 flex justify-between items-end">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Compliance & Audit Hub</h1>
-                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-blue-200 decoration-4">Comprehensive Offshore Logistics Tracking.</p>
+                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-blue-200 decoration-4 text-sm">Comprehensive Offshore Logistics Tracking.</p>
                     </div>
                     <div className="text-xs font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
                         System Status: <span className="text-green-600 font-bold">Live</span>
@@ -112,15 +112,15 @@ const ManagerDashboard = () => {
                 {/* --- STATS CARDS --- */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Assets Handled</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Assets Handled</p>
                         <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{entries.length} Vessels</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Revenue (USD)</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Revenue (USD)</p>
                         <h3 className="text-3xl font-bold text-emerald-600 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Volume Processed</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Volume Processed</p>
                         <h3 className="text-3xl font-bold text-orange-600 tracking-tighter">{totalVolume.toLocaleString()} m³</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
@@ -140,7 +140,7 @@ const ManagerDashboard = () => {
                     </div>
                     <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Waste Class</label>
-                        <select className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm" value={wasteType} onChange={(e) => setWasteType(e.target.value)}>
+                        <select className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold" value={wasteType} onChange={(e) => setWasteType(e.target.value)}>
                             <option value="">All Waste Types</option>
                             <option value="sludge">Oily Sludge</option>
                             <option value="plastic">Plastic</option>
@@ -187,7 +187,7 @@ const ManagerDashboard = () => {
                                             <div className="flex items-center text-slate-600 text-xs font-bold uppercase">
                                                 <Anchor size={12} className="mr-1 text-slate-400" /> {entry.terminal || 'Pending Berth'}
                                             </div>
-                                            <div className="text-[9px] text-slate-400 uppercase tracking-widest">Charterer: {entry.chartererName || 'N/A'}</div>
+                                            <div className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Charterer: {entry.chartererName || 'N/A'}</div>
                                         </td>
                                         <td className="p-4">
                                             <div className="text-[11px] font-bold text-slate-700 uppercase">ARR: {entry.dateOfArrival ? new Date(entry.dateOfArrival).toLocaleDateString() : 'N/A'}</div>
@@ -211,7 +211,7 @@ const ManagerDashboard = () => {
                                                 {!entry.nimasaInspector && !entry.xpoInspector && <span className="text-[9px] text-slate-300 font-bold uppercase">No Inspector Log</span>}
                                             </div>
                                         </td>
-                                        <td className="p-4">
+                                        <td className="p-4 text-center">
                                             <div className="flex items-center justify-center space-x-2">
                                                 {entry.fileUrl ? (
                                                     <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
@@ -230,7 +230,9 @@ const ManagerDashboard = () => {
                                     <tr>
                                         <td colSpan="7" className="p-24 text-center">
                                             <div className="flex flex-col items-center">
-                                                <Search size={40} className="text-slate-200 mb-2" />
+                                                <div className="p-4 bg-slate-50 rounded-full mb-4">
+                                                    <Search size={40} className="text-slate-200" />
+                                                </div>
                                                 <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">No matching vessel records found</p>
                                             </div>
                                         </td>

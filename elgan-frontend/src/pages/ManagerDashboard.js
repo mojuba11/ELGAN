@@ -102,7 +102,7 @@ const ManagerDashboard = () => {
                 <header className="mb-8 flex justify-between items-end">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Compliance & Audit Hub</h1>
-                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-blue-200 decoration-4 text-sm">Comprehensive Offshore Logistics Tracking.</p>
+                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-blue-200 decoration-4 text-sm">Comprehensive Offshore Waste Collection Tracking.</p>
                     </div>
                     <div className="text-xs font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
                         System Status: <span className="text-green-600 font-bold">Live</span>

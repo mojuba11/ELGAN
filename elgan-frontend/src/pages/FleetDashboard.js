@@ -89,8 +89,8 @@ const FleetDashboard = () => {
                 {/* --- HEADER --- */}
                 <div className="flex justify-between items-end mb-8">
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Fleet Operations Log</h1>
-                        <p className="text-slate-500 font-medium mt-1">Digitize and manage waste manifests for offshore vessel assets.</p>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Operations Log</h1>
+                        <p className="text-slate-500 font-medium mt-1">Offshore waste management manifests.</p>
                     </div>
                     <button 
                         onClick={() => navigate('/entry')}
@@ -125,7 +125,7 @@ const FleetDashboard = () => {
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                         <h2 className="font-black text-slate-800 text-sm uppercase tracking-tighter flex items-center">
-                           <ClipboardCheck size={16} className="mr-2 text-blue-600" /> Recent Digital Records
+                           <ClipboardCheck size={16} className="mr-2 text-blue-600" /> Recent Records
                         </h2>
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{entries.length} Entries Logged</span>
                     </div>

@@ -143,7 +143,7 @@ const FinancialReportForm = () => {
                                 <Loader2 className="animate-spin mr-2" size={20} />
                                 <span>Processing...</span>
                             </>
-                        ) : "Authorize & Submit Report"}
+                        ) : "Submit"}
                     </button>
 
                 </form>

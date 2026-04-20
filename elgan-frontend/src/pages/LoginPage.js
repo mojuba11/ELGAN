@@ -37,12 +37,20 @@ const LoginPage = ({ setUser }) => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-100 px-4 font-sans">
       <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-200">
-        {/* --- HEADER --- */}
+        
+        {/* --- LOGO & HEADER --- */}
         <div className="text-center mb-8">
+          {/* Logo Integration */}
+          <img 
+            src="/elgan.jpeg" 
+            alt="Elgan Logo" 
+            className="h-20 mx-auto mb-4 object-contain rounded-xl shadow-sm border border-slate-50"
+          />
+          
           <div className="inline-block bg-blue-900 text-white px-4 py-1 rounded-md mb-4 text-[10px] font-black tracking-[0.2em] uppercase">
             Official Portal
           </div>
-          <h1 className="text-4xl font-black text-blue-900 tracking-tighter uppercase">
+          <h1 className="text-4xl font-black text-blue-900 tracking-tighter uppercase leading-none">
             Elgan <span className="text-blue-600">Integrated</span>
           </h1>
           <p className="text-slate-500 mt-2 text-sm font-medium">Offshore Waste Management System</p>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { 
-    Plus, Download, Edit, Send, LogOut, User, 
+    Plus, Download, Edit, LogOut, User, 
     Ship, ClipboardCheck, Clock, HardDrive, BarChart3, Anchor, DollarSign, FileSpreadsheet
-} from 'lucide-react';
+} from 'lucide-react'; // Removed 'Send' to fix CI build error
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {
@@ -64,9 +64,12 @@ const FleetDashboard = () => {
             {/* --- EXECUTIVE TOP BAR --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/fleet')}>
-                    <div className="bg-blue-600 p-2 rounded-lg">
-                        <BarChart3 className="text-white" size={20} />
-                    </div>
+                    {/* Logo instead of Icon */}
+                    <img 
+                        src="/elgan.jpeg" 
+                        alt="ELGAN" 
+                        className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" 
+                    />
                     <span className="text-xl font-bold text-slate-800 tracking-tight">
                         ELGAN <span className="text-blue-600 uppercase">Fleet</span>
                     </span>

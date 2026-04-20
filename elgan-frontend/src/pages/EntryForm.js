@@ -139,7 +139,7 @@ const EntryForm = () => {
                     </div>
 
                     <button type="submit" className="md:col-span-2 w-full bg-slate-900 text-white p-4 rounded-2xl font-black uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center shadow-lg active:scale-95">
-                        <FilePlus className="mr-2" size={20} /> Finalize & Digitize Manifest
+                        <FilePlus className="mr-2" size={20} /> Submit
                     </button>
                 </form>
             </div>

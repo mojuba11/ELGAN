@@ -35,7 +35,16 @@ const EntryForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // --- 1. CRITICAL TOKEN RETRIEVAL ---
         const token = localStorage.getItem('elgan_token');
+
+        // Security Check: If no token exists, block the request immediately
+        if (!token) {
+            alert("Session Expired or No Token Found. Please log in again.");
+            navigate('/login');
+            return;
+        }
 
         const data = new FormData();
         
@@ -44,24 +53,34 @@ const EntryForm = () => {
             data.append(key, formData[key]);
         });
         
-        // Append the file using the key 'manifestScan' to match backend requirements
+        // Append the file using the key 'manifestScan'
         if (file) {
             data.append('manifestScan', file);
         }
 
         try {
+            // --- 2. SECURE AXIOS POST ---
             await axios.post(`${API_BASE_URL}/api/entries/add`, data, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`, // Ensure 'Bearer ' prefix is present
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            
             alert("Manifest Digitized & Saved Successfully!");
             navigate('/fleet');
         } catch (err) {
-            console.error("Submission error:", err);
-            const errorMsg = err.response?.data?.msg || "Submission Failed. Ensure you are logged in and all required fields are filled.";
-            alert(errorMsg);
+            console.error("Submission error details:", err.response?.data);
+            
+            // Check specifically for Authorization errors
+            if (err.response?.status === 401) {
+                alert("Authorization Denied: Your session is invalid. Redirecting to login...");
+                localStorage.clear();
+                navigate('/login');
+            } else {
+                const errorMsg = err.response?.data?.msg || "Submission Failed. Ensure all required fields are filled.";
+                alert(errorMsg);
+            }
         }
     };
 
@@ -86,13 +105,7 @@ const EntryForm = () => {
                     {/* Vessel Details */}
                     <div className="space-y-4">
                         <h3 className="font-black text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100 pb-2">Vessel Information</h3>
-                        <input 
-                            name="vesselName" 
-                            placeholder="Vessel Name" 
-                            onChange={handleChange} 
-                            required 
-                            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-700 placeholder:font-normal" 
-                        />
+                        <input name="vesselName" placeholder="Vessel Name" onChange={handleChange} required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-700 placeholder:font-normal" />
                         <div className="grid grid-cols-2 gap-4">
                             <input name="vesselType" placeholder="Vessel Type" onChange={handleChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-700 placeholder:font-normal" />
                             <input name="imoNumber" placeholder="IMO Number" onChange={handleChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-700 placeholder:font-normal" />

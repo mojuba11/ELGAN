@@ -79,14 +79,13 @@ const ManagerDashboard = () => {
             {/* --- EXECUTIVE TOP BAR --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
-                    {/* Logo Integration */}
                     <img 
                         src="/elgan.jpeg" 
                         alt="ELGAN" 
                         className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" 
                     />
                     <span className="text-lg md:text-xl font-black text-[#0089A3] tracking-tighter uppercase">
-                        <span className="text-slate-400 font-normal lowercase"></span>
+                        Elgan <span className="text-slate-400 font-normal lowercase">operations</span>
                     </span>
                 </div>
                 
@@ -144,7 +143,7 @@ const ManagerDashboard = () => {
                     </div>
 
                     <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Total Vessel Inspected</p>
+                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Total Assets</p>
                         <h3 className="text-xl md:text-3xl font-bold text-[#0089A3] tracking-tighter">{entries.length} Vessels</h3>
                     </div>
                 </div>

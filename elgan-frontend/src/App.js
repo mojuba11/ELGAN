@@ -4,7 +4,7 @@ import LoginPage from './pages/LoginPage';
 import FleetDashboard from './pages/FleetDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
 import EntryForm from './pages/EntryForm'; 
-import FinancialReportForm from './pages/FinancialReportForm'; // NEW IMPORT
+import FinancialReportForm from './pages/FinancialReportForm';
 import './App.css'; 
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
     }
   });
 
-  // Sync state to local storage if user changes (e.g., logging out)
+  // Sync state to local storage and handle session cleanup
   useEffect(() => {
     if (!user) {
       localStorage.removeItem('elgan_user');
@@ -31,37 +31,40 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Public Route: Login */}
+          {/* --- PUBLIC ACCESS --- */}
           <Route 
             path="/login" 
             element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />} 
           />
 
-          {/* Protected Fleet Routes */}
+          {/* --- FLEET PERSONNEL ROUTES --- */}
+          {/* Main Operational Log */}
           <Route 
             path="/fleet" 
-            element={user?.role === 'fleet' ? <FleetDashboard user={user} setUser={setUser} /> : <Navigate to="/login" replace />} 
+            element={user?.role === 'fleet' ? <FleetDashboard /> : <Navigate to="/login" replace />} 
           />
 
-          {/* Protected Entry Form Route */}
+          {/* New Manifest Entry Form */}
           <Route 
             path="/entry" 
             element={user?.role === 'fleet' ? <EntryForm /> : <Navigate to="/login" replace />} 
           />
 
-          {/* NEW: Protected Financial Report Route */}
+          {/* Monthly Financial Reporting */}
           <Route 
             path="/financial-report" 
             element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
           />
 
-          {/* Protected Manager Route */}
+          {/* --- ADMINISTRATIVE ROUTES --- */}
+          {/* Compliance & Audit Hub */}
           <Route 
             path="/manager" 
-            element={user?.role === 'manager' ? <ManagerDashboard user={user} setUser={setUser} /> : <Navigate to="/login" replace />} 
+            element={user?.role === 'manager' ? <ManagerDashboard /> : <Navigate to="/login" replace />} 
           />
 
-          {/* Fallback Redirect */}
+          {/* --- FALLBACKS --- */}
+          {/* Redirect any unknown path to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

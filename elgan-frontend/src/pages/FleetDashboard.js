@@ -71,7 +71,7 @@ const FleetDashboard = () => {
                         onError={(e) => e.target.style.display='none'} // Prevents crash if image missing
                     />
                     <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase">
-                        Elgan <span className="text-slate-400 font-normal lowercase">fleet</span>
+                        <span className="text-slate-400 font-normal lowercase"></span>
                     </span>
                 </div>
                 

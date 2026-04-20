@@ -31,7 +31,10 @@ const LoginPage = ({ setUser }) => {
       // Role-based Navigation
       if (user.role === 'manager') {
         navigate('/manager');
+      } else if (user.role === 'fleet') {
+        navigate('/fleet');
       } else {
+        // Fallback for unexpected roles
         navigate('/fleet');
       }
     } catch (err) {
@@ -113,10 +116,10 @@ const LoginPage = ({ setUser }) => {
             {isLoading ? (
               <>
                 <Loader2 className="animate-spin mr-2" size={20} /> 
-                <span className="uppercase tracking-widest text-xs font-bold">Veriying Details...</span>
+                <span className="uppercase tracking-widest text-xs font-bold">Verifying Details...</span>
               </>
             ) : (
-              <span className="uppercase tracking-widest text-sm font-bold">Access portal</span>
+              <span className="uppercase tracking-widest text-sm font-bold">Access Portal</span>
             )}
           </button>
         </form>
@@ -127,7 +130,7 @@ const LoginPage = ({ setUser }) => {
             © 2026 Elgan integrated Ltd.
           </p>
           <p className="text-slate-300 text-[8px] mt-2 font-medium italic">
-            Secure Offshore Waste Management System v1.0
+            Secure Offshore Waste Management System v1.1
           </p>
         </div>
       </div>

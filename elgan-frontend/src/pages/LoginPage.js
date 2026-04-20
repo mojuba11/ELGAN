@@ -18,7 +18,6 @@ const LoginPage = ({ setUser }) => {
     setError('');
 
     try {
-      // Logic for backend API call remains unchanged
       const response = await axios.post(`${API_BASE_URL}/api/auth/login`, { username, password });
       const { user, token } = response.data;
       
@@ -36,13 +35,11 @@ const LoginPage = ({ setUser }) => {
   };
 
   return (
-    // Background updated to a very pale blue-grey to complement the cyan
     <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4 font-sans">
       <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border border-slate-100">
         
         {/* --- LOGO & HEADER --- */}
         <div className="text-center mb-8 flex flex-col items-center">
-          {/* Logo Alignment: Flex column for tight centering */}
           <img 
             src="/elgan.jpeg" 
             alt="Elgan Logo" 
@@ -52,7 +49,6 @@ const LoginPage = ({ setUser }) => {
           <p className="text-slate-500 mt-2 text-sm font-black uppercase tracking-widest leading-tight">
             Offshore <br /> Waste Management System
           </p>
-          {/* Accent bar color derived from the logo cyan */}
           <div className="h-1.5 w-16 bg-[#0089A3] mx-auto mt-6 rounded-full"></div>
         </div>
 
@@ -68,7 +64,6 @@ const LoginPage = ({ setUser }) => {
           <div>
             <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 ml-1">Username</label>
             <div className="relative">
-              {/* Icon color from the logo dark grey */}
               <User className="absolute left-3 top-3.5 text-[#333333]" size={18} />
               <input 
                 type="text" 
@@ -99,7 +94,6 @@ const LoginPage = ({ setUser }) => {
           <button 
             type="submit" 
             disabled={isLoading} 
-            {/* Button background: Hex code from 'Elgan' cyan */}
             className="w-full bg-[#0089A3] text-white font-black py-4 rounded-xl hover:bg-[#006F85] transition-all flex items-center justify-center shadow-xl shadow-cyan-100 disabled:bg-slate-300 active:scale-95 text-lg"
           >
             {isLoading ? (
@@ -113,10 +107,9 @@ const LoginPage = ({ setUser }) => {
           </button>
         </form>
 
-        {/* --- FOOTER INSIDE CARD --- */}
+        {/* --- FOOTER --- */}
         <div className="mt-12 pt-6 border-t border-slate-100 text-center">
           <p className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em]">
-            {/* Company Name corrected from the logo image */}
             © 2026 Elgan integrated Ltd.
           </p>
           <p className="text-slate-300 text-[8px] mt-2 font-medium italic">

@@ -100,7 +100,7 @@ const FleetDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                         <div className="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit mb-4"><Ship size={24} /></div>
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">My Total Logs</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Vessel Inspected</p>
                         <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{totalSubmissions}</h3>
                     </div>
 
@@ -112,7 +112,7 @@ const FleetDashboard = () => {
 
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                         <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl w-fit mb-4"><HardDrive size={24} /></div>
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Recent Volume (m³)</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Waste Volume (m³)</p>
                         <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{recentVol}</h3>
                     </div>
                 </div>

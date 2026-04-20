@@ -85,7 +85,7 @@ const ManagerDashboard = () => {
                         className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" 
                     />
                     <span className="text-lg md:text-xl font-black text-[#0089A3] tracking-tighter uppercase">
-                        Elgan <span className="text-slate-400 font-normal lowercase">operations</span>
+                        <span className="text-slate-400 font-normal lowercase"></span>
                     </span>
                 </div>
                 

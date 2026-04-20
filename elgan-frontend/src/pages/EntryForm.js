@@ -124,8 +124,8 @@ const EntryForm = () => {
                             <select name="wasteType" onChange={handleChange} value={formData.wasteType} className="w-full p-3 bg-white border border-blue-200 rounded-xl font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-400 transition-all">
                                 <option value="sludge">Sludge</option>
                                 <option value="plastic">Plastic</option>
-                                <option value="food">Food Waste</option>
-                                <option value="hazardous">Garbage</option>
+                                <option value="garbage">Garbage</option>
+                                <option value="n/a">N/A</option>
                             </select>
                         </div>
                         <div>

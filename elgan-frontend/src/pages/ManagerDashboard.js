@@ -114,7 +114,7 @@ const ManagerDashboard = () => {
             <main className="p-4 md:p-8 max-w-[1600px] mx-auto">
                 <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Compliance & Audit Hub</h1>
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Admin Dashboard</h1>
                         <p className="text-slate-500 mt-1 font-medium italic underline decoration-[#0089A3]/30 decoration-4 text-xs md:text-sm">Offshore Waste Management System.</p>
                     </div>
                     <div className="text-[10px] font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200 uppercase tracking-widest">

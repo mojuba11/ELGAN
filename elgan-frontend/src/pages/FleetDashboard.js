@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { 
     Plus, Download, Edit, LogOut, User, 
-    Ship, ClipboardCheck, Clock, HardDrive, Anchor, DollarSign, FileSpreadsheet
-} from 'lucide-react'; 
+    Ship, ClipboardCheck, Clock, HardDrive, Anchor, DollarSign
+} from 'lucide-react'; // Removed FileSpreadsheet to prevent crash
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {
@@ -106,7 +106,8 @@ const FleetDashboard = () => {
                             onClick={() => navigate('/financial-report')}
                             className="flex-1 md:flex-none flex items-center justify-center bg-slate-800 text-white px-5 py-3 rounded-xl hover:bg-black transition shadow-lg font-bold text-xs active:scale-95"
                         >
-                            <FileSpreadsheet size={18} className="mr-2 text-[#0089A3]" /> Fill Financial Report
+                            {/* Replaced icon with a simple Plus or Clipboard to avoid FileSpreadsheet issues */}
+                            <ClipboardCheck size={18} className="mr-2 text-[#0089A3]" /> Fill Financial Report
                         </button>
                         <button 
                             onClick={() => navigate('/entry')}

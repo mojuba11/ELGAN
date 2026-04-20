@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import FleetDashboard from './pages/FleetDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
-import EntryForm from './pages/EntryForm'; // Ensure this matches your filename
+import EntryForm from './pages/EntryForm'; 
+import FinancialReportForm from './pages/FinancialReportForm'; // NEW IMPORT
 import './App.css'; 
 
 function App() {
@@ -42,10 +43,16 @@ function App() {
             element={user?.role === 'fleet' ? <FleetDashboard user={user} setUser={setUser} /> : <Navigate to="/login" replace />} 
           />
 
-          {/* NEW: Protected Entry Form Route */}
+          {/* Protected Entry Form Route */}
           <Route 
             path="/entry" 
             element={user?.role === 'fleet' ? <EntryForm /> : <Navigate to="/login" replace />} 
+          />
+
+          {/* NEW: Protected Financial Report Route */}
+          <Route 
+            path="/financial-report" 
+            element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
           />
 
           {/* Protected Manager Route */}

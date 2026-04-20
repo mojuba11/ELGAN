@@ -8,7 +8,6 @@ import FinancialReportForm from './pages/FinancialReportForm';
 import './App.css'; 
 
 function App() {
-  // Check if user is already logged in via LocalStorage
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('elgan_user');
     try {
@@ -18,7 +17,6 @@ function App() {
     }
   });
 
-  // Sync state to local storage and handle session cleanup
   useEffect(() => {
     if (!user) {
       localStorage.removeItem('elgan_user');
@@ -27,44 +25,40 @@ function App() {
     }
   }, [user]);
 
+  // Logic to prevent infinite ping-pong loops
+  const getInitialRoute = () => {
+    if (!user) return <LoginPage setUser={setUser} />;
+    if (user.role === 'manager') return <Navigate to="/manager" replace />;
+    if (user.role === 'fleet') return <Navigate to="/fleet" replace />;
+    return <LoginPage setUser={setUser} />;
+  };
+
   return (
     <Router>
       <div className="App">
         <Routes>
-          {/* --- PUBLIC ACCESS --- */}
-          <Route 
-            path="/login" 
-            element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />} 
-          />
+          <Route path="/login" element={getInitialRoute()} />
 
-          {/* --- FLEET PERSONNEL ROUTES --- */}
-          {/* Main Operational Log */}
+          {/* PROTECTED FLEET ROUTES */}
           <Route 
             path="/fleet" 
             element={user?.role === 'fleet' ? <FleetDashboard /> : <Navigate to="/login" replace />} 
           />
-
-          {/* New Manifest Entry Form */}
           <Route 
             path="/entry" 
             element={user?.role === 'fleet' ? <EntryForm /> : <Navigate to="/login" replace />} 
           />
-
-          {/* Monthly Financial Reporting */}
           <Route 
             path="/financial-report" 
             element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
           />
 
-          {/* --- ADMINISTRATIVE ROUTES --- */}
-          {/* Compliance & Audit Hub */}
+          {/* PROTECTED MANAGER ROUTES */}
           <Route 
             path="/manager" 
             element={user?.role === 'manager' ? <ManagerDashboard /> : <Navigate to="/login" replace />} 
           />
 
-          {/* --- FALLBACKS --- */}
-          {/* Redirect any unknown path to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

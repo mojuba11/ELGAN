@@ -122,11 +122,10 @@ const EntryForm = () => {
                         <div>
                             <label className="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">Waste Category</label>
                             <select name="wasteType" onChange={handleChange} value={formData.wasteType} className="w-full p-3 bg-white border border-blue-200 rounded-xl font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-400 transition-all">
-                                <option value="sludge">Oily Sludge</option>
+                                <option value="sludge">Sludge</option>
                                 <option value="plastic">Plastic</option>
                                 <option value="food">Food Waste</option>
-                                <option value="hazardous">Hazardous</option>
-                                <option value="bilge">Bilge Water</option>
+                                <option value="hazardous">Garbage</option>
                             </select>
                         </div>
                         <div>

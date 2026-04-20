@@ -25,21 +25,23 @@ function App() {
     }
   }, [user]);
 
-  // Logic to prevent infinite ping-pong loops
-  const getInitialRoute = () => {
-    if (!user) return <LoginPage setUser={setUser} />;
-    if (user.role === 'manager') return <Navigate to="/manager" replace />;
-    if (user.role === 'fleet') return <Navigate to="/fleet" replace />;
-    return <LoginPage setUser={setUser} />;
+  // Defensive routing helper
+  const getRedirectPath = () => {
+    if (!user) return "/login";
+    return user.role === 'manager' ? "/manager" : "/fleet";
   };
 
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/login" element={getInitialRoute()} />
+          {/* Public Access */}
+          <Route 
+            path="/login" 
+            element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={getRedirectPath()} replace />} 
+          />
 
-          {/* PROTECTED FLEET ROUTES */}
+          {/* Fleet Personnel Protected Routes */}
           <Route 
             path="/fleet" 
             element={user?.role === 'fleet' ? <FleetDashboard /> : <Navigate to="/login" replace />} 
@@ -53,12 +55,14 @@ function App() {
             element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
           />
 
-          {/* PROTECTED MANAGER ROUTES */}
+          {/* Admin Protected Routes */}
           <Route 
             path="/manager" 
             element={user?.role === 'manager' ? <ManagerDashboard /> : <Navigate to="/login" replace />} 
           />
 
+          {/* Fallbacks */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

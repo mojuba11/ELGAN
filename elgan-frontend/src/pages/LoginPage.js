@@ -44,16 +44,12 @@ const LoginPage = ({ setUser }) => {
           <img 
             src="/elgan.jpeg" 
             alt="Elgan Logo" 
-            className="h-20 mx-auto mb-4 object-contain rounded-xl shadow-sm border border-slate-50"
+            className="h-24 mx-auto mb-4 object-contain rounded-xl shadow-sm border border-slate-50"
           />
           
-          <div className="inline-block bg-blue-900 text-white px-4 py-1 rounded-md mb-4 text-[10px] font-black tracking-[0.2em] uppercase">
-            Official Portal
-          </div>
-          <h1 className="text-4xl font-black text-blue-900 tracking-tighter uppercase leading-none">
-            Elgan <span className="text-blue-600">Integrated</span>
-          </h1>
-          <p className="text-slate-500 mt-2 text-sm font-medium">Offshore Waste Management System</p>
+          <p className="text-slate-500 mt-2 text-sm font-bold uppercase tracking-wider">
+            Offshore Waste Management System
+          </p>
         </div>
 
         {/* --- ERROR DISPLAY --- */}

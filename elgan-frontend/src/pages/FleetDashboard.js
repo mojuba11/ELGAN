@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { 
     Plus, Download, Edit, LogOut, User, 
-    Ship, ClipboardCheck, Clock, HardDrive, BarChart3, Anchor, DollarSign, FileSpreadsheet
-} from 'lucide-react'; // Removed 'Send' to fix CI build error
+    Ship, ClipboardCheck, Clock, HardDrive, Anchor, DollarSign, FileSpreadsheet
+} from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {

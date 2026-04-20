@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FileSpreadsheet, ArrowLeft, DollarSign, Calculator, Loader2 } from 'lucide-react';
+import { ArrowLeft, DollarSign, Calculator, Loader2 } from 'lucide-react';
 
 const FinancialReportForm = () => {
     const navigate = useNavigate();

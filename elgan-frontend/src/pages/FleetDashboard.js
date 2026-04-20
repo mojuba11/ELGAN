@@ -71,7 +71,7 @@ const FleetDashboard = () => {
                         className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" 
                     />
                     <span className="text-xl font-bold text-slate-800 tracking-tight">
-                        ELGAN <span className="text-blue-600 uppercase">Fleet</span>
+                        <span className="text-blue-600 uppercase"></span>
                     </span>
                 </div>
                 
@@ -100,7 +100,7 @@ const FleetDashboard = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Operations Log</h1>
-                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-blue-200 decoration-4">Digital Waste Collection tracking for offshore assets.</p>
+                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-blue-200 decoration-4">Offshore Waste Management System.</p>
                     </div>
                     <div className="flex space-x-3 w-full md:w-auto">
                         <button 

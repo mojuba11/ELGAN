@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
     Search, FileText, FilterX, 
-    LogOut, User, BarChart3, Trash2, Anchor, CheckCircle2, DollarSign
-} from 'lucide-react';
+    LogOut, User, Trash2, Anchor, CheckCircle2, DollarSign 
+} from 'lucide-react'; // Removed BarChart3 and Send to keep clean
 
 const ManagerDashboard = () => {
     const navigate = useNavigate();
@@ -78,10 +78,13 @@ const ManagerDashboard = () => {
         <div className="bg-slate-50 min-h-screen font-sans">
             {/* --- EXECUTIVE TOP BAR --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
-                <div className="flex items-center space-x-2">
-                    <div className="bg-blue-600 p-1.5 rounded-lg">
-                        <BarChart3 className="text-white" size={18} />
-                    </div>
+                <div className="flex items-center space-x-3">
+                    {/* Logo Integration */}
+                    <img 
+                        src="/elgan.jpeg" 
+                        alt="ELGAN" 
+                        className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" 
+                    />
                     <span className="text-lg md:text-xl font-bold text-slate-800 tracking-tight">
                         ELGAN <span className="hidden md:inline text-blue-600 uppercase">Operations</span>
                     </span>
@@ -126,7 +129,6 @@ const ManagerDashboard = () => {
                         <h3 className="text-xl md:text-3xl font-bold text-slate-800 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
                     </div>
                     
-                    {/* NEW: 2% ASSESSOR FEE CARD */}
                     <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-emerald-100 bg-emerald-50/30">
                         <p className="text-emerald-600 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1 flex items-center">
                             <DollarSign size={10} className="mr-1"/> 2% Assessor Fee

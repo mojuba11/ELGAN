@@ -35,8 +35,8 @@ const LoginPage = ({ setUser }) => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-100 px-4 font-sans">
-      <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-200">
+    <div className="flex items-center justify-center min-h-screen bg-emerald-50 px-4 font-sans">
+      <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border border-emerald-100">
         
         {/* --- LOGO & HEADER --- */}
         <div className="text-center mb-8">
@@ -44,12 +44,13 @@ const LoginPage = ({ setUser }) => {
           <img 
             src="/elgan.jpeg" 
             alt="Elgan Logo" 
-            className="h-24 mx-auto mb-4 object-contain rounded-xl shadow-sm border border-slate-50"
+            className="h-24 mx-auto mb-4 object-contain rounded-xl shadow-sm border border-emerald-50"
           />
           
-          <p className="text-slate-500 mt-2 text-sm font-bold uppercase tracking-wider">
+          <p className="text-emerald-700 mt-2 text-sm font-black uppercase tracking-[0.1em]">
             Offshore Waste Management System
           </p>
+          <div className="h-1 w-12 bg-emerald-400 mx-auto mt-4 rounded-full"></div>
         </div>
 
         {/* --- ERROR DISPLAY --- */}
@@ -62,13 +63,13 @@ const LoginPage = ({ setUser }) => {
         {/* --- LOGIN FORM --- */}
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Username</label>
+            <label className="block text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1 ml-1">Username</label>
             <div className="relative">
-              <User className="absolute left-3 top-3.5 text-slate-400" size={18} />
+              <User className="absolute left-3 top-3.5 text-emerald-300" size={18} />
               <input 
                 type="text" 
                 required 
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-700" 
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-bold text-slate-700" 
                 placeholder="Enter Username" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)} 
@@ -77,13 +78,13 @@ const LoginPage = ({ setUser }) => {
           </div>
 
           <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Security Code</label>
+            <label className="block text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1 ml-1">Security Code</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3.5 text-slate-400" size={18} />
+              <Lock className="absolute left-3 top-3.5 text-emerald-300" size={18} />
               <input 
                 type="password" 
                 required 
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-700" 
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-bold text-slate-700" 
                 placeholder="••••••••" 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
@@ -94,7 +95,7 @@ const LoginPage = ({ setUser }) => {
           <button 
             type="submit" 
             disabled={isLoading} 
-            className="w-full bg-blue-900 text-white font-black py-4 rounded-xl hover:bg-black transition-all flex items-center justify-center shadow-lg shadow-blue-100 disabled:bg-slate-400 active:scale-95"
+            className="w-full bg-emerald-600 text-white font-black py-4 rounded-xl hover:bg-emerald-700 transition-all flex items-center justify-center shadow-lg shadow-emerald-100 disabled:bg-slate-400 active:scale-95"
           >
             {isLoading ? (
               <>
@@ -102,7 +103,7 @@ const LoginPage = ({ setUser }) => {
                 <span className="uppercase tracking-widest text-xs">Authenticating...</span>
               </>
             ) : (
-              <span className="uppercase tracking-widest text-sm">Login</span>
+              <span className="uppercase tracking-widest text-sm">Access Portal</span>
             )}
           </button>
         </form>
@@ -112,8 +113,8 @@ const LoginPage = ({ setUser }) => {
           <p className="text-slate-400 text-[9px] font-bold uppercase tracking-[0.15em]">
             © 2026 Elgan Integrated Ltd.
           </p>
-          <p className="text-slate-300 text-[8px] mt-1 font-medium italic">
-            Secure Offshore Asset Management v2.0
+          <p className="text-emerald-300 text-[8px] mt-1 font-medium italic">
+            Sustainable Offshore Logistics v2.0
           </p>
         </div>
       </div>

@@ -195,7 +195,7 @@ const EntryForm = () => {
                         {isLoading ? (
                             <Loader2 className="animate-spin" size={24} />
                         ) : (
-                            <>Authorize & Digitization Entry</>
+                            <>Submit</>
                         )}
                     </button>
                 </form>

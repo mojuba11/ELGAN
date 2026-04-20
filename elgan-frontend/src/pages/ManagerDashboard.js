@@ -17,12 +17,9 @@ const ManagerDashboard = () => {
 
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-    // --- SECURE MOBILE-FRIENDLY LOGOUT ---
     const handleLogout = () => {
-        const confirmLogout = window.confirm("Are you sure you want to log out?");
-        if (confirmLogout) {
+        if (window.confirm("Confirm logout?")) {
             localStorage.clear(); 
-            navigate('/login');
             window.location.href = '/login'; 
         }
     };
@@ -31,13 +28,9 @@ const ManagerDashboard = () => {
         try {
             const token = localStorage.getItem('elgan_token');
             const url = `${API_BASE_URL}/api/entries/search?vesselName=${searchTerm}&wasteType=${wasteType}&startDate=${startDate}&endDate=${endDate}`;
-            
-            const res = await axios.get(url, { 
-                headers: { 'Authorization': `Bearer ${token}` } 
-            });
-            setEntries(res.data);
+            const res = await axios.get(url, { headers: { 'Authorization': `Bearer ${token}` } });
+            setEntries(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
-            console.error("Audit Fetch Error:", err);
             if (err.response?.status === 401) navigate('/login');
         }
     }, [API_BASE_URL, searchTerm, wasteType, startDate, endDate, navigate]);
@@ -48,208 +41,120 @@ const ManagerDashboard = () => {
         if (storedName) setUserName(storedName);
     }, [fetchEntries]);
 
-    const handleDelete = async (id) => {
-        if (window.confirm("CRITICAL: Are you sure you want to delete this record?")) {
-            try {
-                const token = localStorage.getItem('elgan_token');
-                await axios.delete(`${API_BASE_URL}/api/entries/${id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                fetchEntries();
-            } catch (err) {
-                alert("Error deleting record. Check permissions.");
-            }
-        }
-    };
-
-    // --- CALCULATIONS ---
-    const totalRevenue = entries.reduce((acc, curr) => acc + (curr.amountMade || 0), 0);
-    const totalVolume = entries.reduce((acc, curr) => acc + (curr.volume || 0), 0);
-    const assessorFee = totalRevenue * 0.02; // 2% Fee Calculation
-
-    const resetFilters = () => {
-        setSearchTerm('');
-        setWasteType('');
-        setStartDate('');
-        setEndDate('');
-    };
+    const totalRevenue = entries.reduce((acc, curr) => acc + (Number(curr.amountMade) || 0), 0);
+    const totalVolume = entries.reduce((acc, curr) => acc + (Number(curr.volume) || 0), 0);
+    const assessorFee = totalRevenue * 0.02;
 
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
-            {/* --- EXECUTIVE TOP BAR --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
-                    <img 
-                        src="/elgan.jpeg" 
-                        alt="ELGAN" 
-                        className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" 
-                    />
-                    <span className="text-lg md:text-xl font-black text-[#0089A3] tracking-tighter uppercase">
-                        <span className="text-slate-400 font-normal lowercase"></span>
-                    </span>
+                    <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg" />
+                    <span className="text-lg md:text-xl font-black text-[#0089A3] uppercase tracking-tighter">ELGAN</span>
                 </div>
-                
-                <div className="flex items-center space-x-2 md:space-x-6">
-                    <div className="hidden sm:flex items-center space-x-3 border-r pr-4 border-slate-200">
-                        <div className="text-right">
-                            <p className="text-xs font-bold text-slate-800 line-clamp-1">{userName}</p>
-                            <p className="text-[9px] font-bold text-[#0089A3] uppercase tracking-widest text-right">Admin Access</p>
-                        </div>
-                        <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200">
-                            <User size={18} />
-                        </div>
+                <div className="flex items-center space-x-4">
+                    <div className="hidden sm:block text-right border-r pr-4 border-slate-200">
+                        <p className="text-xs font-bold">{userName}</p>
+                        <p className="text-[9px] font-bold text-[#0089A3] uppercase tracking-widest">Admin Access</p>
                     </div>
-                    
-                    <button 
-                        onClick={handleLogout} 
-                        className="flex items-center justify-center bg-red-50 md:bg-transparent text-red-600 md:text-slate-400 hover:text-red-700 p-2 md:p-0 rounded-lg transition-colors font-bold text-sm"
-                    >
-                        <LogOut size={20} className="md:mr-2" /> 
-                        <span className="hidden md:inline">Logout</span>
-                    </button>
+                    <button onClick={handleLogout} className="text-red-500 hover:bg-red-50 p-2 rounded-xl transition-all"><LogOut size={20}/></button>
                 </div>
             </nav>
 
             <main className="p-4 md:p-8 max-w-[1600px] mx-auto">
-                <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                    <div>
-                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Admin Dashboard</h1>
-                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-[#0089A3]/30 decoration-4 text-xs md:text-sm">Offshore Waste Management System.</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <p className="text-slate-400 text-[10px] font-black uppercase mb-1">Gross Revenue</p>
+                        <h3 className="text-2xl font-bold">${totalRevenue.toLocaleString()}</h3>
                     </div>
-                    <div className="text-[10px] font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200 uppercase tracking-widest">
-                        Status: <span className="text-emerald-600 font-bold">Live</span>
+                    <div className="bg-white p-6 rounded-2xl border border-cyan-100 bg-cyan-50/20">
+                        <p className="text-[#0089A3] text-[10px] font-black uppercase mb-1">2% Assessor Fee</p>
+                        <h3 className="text-2xl font-bold text-[#0089A3]">${assessorFee.toLocaleString(undefined, {minimumFractionDigits: 2})}</h3>
                     </div>
-                </header>
-
-                {/* --- STATS CARDS --- */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
-                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Gross Revenue</p>
-                        <h3 className="text-xl md:text-3xl font-bold text-slate-800 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200">
+                        <p className="text-slate-400 text-[10px] font-black uppercase mb-1">Total Volume</p>
+                        <h3 className="text-2xl font-bold text-orange-600">{totalVolume.toFixed(2)} m³</h3>
                     </div>
-                    
-                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-cyan-100 bg-cyan-50/20">
-                        <p className="text-[#0089A3] text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1 flex items-center">
-                            <DollarSign size={10} className="mr-1"/> 2% Assessor Fee
-                        </p>
-                        <h3 className="text-xl md:text-3xl font-bold text-[#0089A3] tracking-tighter">
-                            ${assessorFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-                        </h3>
-                    </div>
-
-                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Total Volume</p>
-                        <h3 className="text-xl md:text-3xl font-bold text-orange-600 tracking-tighter">{totalVolume.toLocaleString()} m³</h3>
-                    </div>
-
-                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Total Assets</p>
-                        <h3 className="text-xl md:text-3xl font-bold text-[#0089A3] tracking-tighter">{entries.length} Vessels</h3>
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200">
+                        <p className="text-slate-400 text-[10px] font-black uppercase mb-1">Total Assets</p>
+                        <h3 className="text-2xl font-bold text-[#0089A3]">{entries.length} Vessels</h3>
                     </div>
                 </div>
 
-                {/* --- FILTERS --- */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-8 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 items-end shadow-slate-100">
-                    <div className="md:col-span-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Vessel Search</label>
+                {/* FILTERS - Fixed select behavior */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm items-end">
+                    <div>
+                        <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block">Vessel Search</label>
                         <div className="relative">
                             <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
-                            <input className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#0089A3]/30 transition-all font-bold" placeholder="Name/IMO..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            <input className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Name/IMO..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                     </div>
                     <div>
-                        <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Waste Class</label>
-                        <select className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-[#0089A3]/30" value={wasteType} onChange={(e) => setWasteType(e.target.value)}>
-                            <option value="">All Waste Types</option>
+                        <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block">Waste Class</label>
+                        <select 
+                            className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-[#0089A3]" 
+                            value={wasteType} 
+                            onChange={(e) => setWasteType(e.target.value)}
+                        >
+                            <option value="">All Types</option>
                             <option value="sludge">Oily Sludge</option>
                             <option value="plastic">Plastic</option>
-                            <option value="food">Food Waste</option>
+                            <option value="garbage">Food Waste</option>
                             <option value="hazardous">Hazardous</option>
                         </select>
                     </div>
-                    <div>
-                        <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">From Arrival</label>
-                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-[#0089A3]/30" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                    </div>
-                    <div>
-                        <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">To Arrival</label>
-                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-[#0089A3]/30" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    </div>
-                    <button onClick={resetFilters} className="bg-[#0089A3] text-white p-2 rounded-xl font-black text-[10px] uppercase h-[40px] hover:bg-[#006F85] transition shadow-lg shadow-cyan-100 active:scale-95">
+                    <input type="date" className="border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                    <input type="date" className="border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                    <button onClick={() => {setSearchTerm(''); setWasteType(''); setStartDate(''); setEndDate('');}} className="bg-[#0089A3] text-white p-2 rounded-xl font-black text-[10px] uppercase h-[40px] shadow-lg shadow-cyan-100 hover:bg-[#006F85] transition-all">
                        <FilterX size={16} className="inline mr-2" /> Reset Audit
                     </button>
                 </div>
 
-                {/* --- TABLE --- */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse min-w-[1000px]">
-                            <thead>
-                                <tr className="bg-slate-50 border-b border-slate-100">
-                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Asset Details</th>
-                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Port/Terminal</th>
-                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Arrival / Inspect</th>
-                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Waste Class</th>
-                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Qty & Rev</th>
-                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Inspectors</th>
-                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+                        <table className="w-full text-left border-collapse">
+                            <thead className="bg-slate-50 border-b border-slate-100">
+                                <tr>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase">Asset Details</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase">Arrival / Inspect</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase">Waste Class</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase">Qty & Rev</th>
+                                    <th className="p-4 text-[10px] font-black text-slate-400 uppercase text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {entries.length > 0 ? entries.map((entry) => (
-                                    <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors group">
+                                {entries.map((entry) => (
+                                    <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors">
                                         <td className="p-4">
-                                            <div className="text-sm font-black text-slate-800 uppercase leading-none mb-1">{entry.vesselName}</div>
-                                            <div className="text-[10px] text-slate-400 font-mono tracking-tighter">IMO: {entry.imoNumber}</div>
+                                            <div className="text-sm font-black text-slate-800 uppercase">{entry.vesselName}</div>
+                                            <div className="text-[10px] text-slate-400 font-mono">IMO: {entry.imoNumber}</div>
                                         </td>
-                                        <td className="p-4 text-xs font-bold text-slate-600 uppercase">
-                                            <Anchor size={12} className="inline mr-1 text-slate-400" /> {entry.terminal || 'Pending'}
-                                        </td>
-                                        <td className="p-4 text-[11px] font-bold text-slate-700 uppercase">
-                                            <div>ARR: {entry.dateOfArrival ? new Date(entry.dateOfArrival).toLocaleDateString() : 'N/A'}</div>
-                                            <div className="text-[#0089A3] uppercase">INS: {entry.dateOfInspection ? new Date(entry.dateOfInspection).toLocaleDateString() : 'N/A'}</div>
+                                        <td className="p-4 text-[11px] font-bold">
+                                            <div className="text-slate-500">ARR: {new Date(entry.dateOfArrival).toLocaleDateString()}</div>
+                                            <div className="text-[#0089A3]">INS: {new Date(entry.dateOfInspection).toLocaleDateString()}</div>
                                         </td>
                                         <td className="p-4">
-                                            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border ${
-                                                entry.wasteType === 'hazardous' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-cyan-50 text-[#0089A3] border-cyan-100'
-                                            }`}>
-                                                {entry.wasteType}
-                                            </span>
+                                            <span className="bg-cyan-50 text-[#0089A3] px-2 py-0.5 rounded text-[9px] font-black uppercase border border-cyan-100">{entry.wasteType}</span>
                                         </td>
                                         <td className="p-4">
-                                            <div className="text-sm font-black text-slate-800">{entry.volume} m³</div>
+                                            <div className="text-sm font-black">{entry.volume} m³</div>
                                             <div className="text-sm font-black text-[#0089A3]">${(entry.amountMade || 0).toLocaleString()}</div>
                                         </td>
-                                        <td className="p-4">
-                                            <div className="flex flex-col gap-1">
-                                                {entry.nimasaInspector && <span className="flex items-center text-[9px] font-black text-slate-500 uppercase"><CheckCircle2 size={10} className="text-emerald-500 mr-1" /> NIMASA</span>}
-                                                {entry.xpoInspector && <span className="flex items-center text-[9px] font-black text-slate-500 uppercase"><CheckCircle2 size={10} className="text-emerald-500 mr-1" /> XPO</span>}
-                                            </div>
-                                        </td>
                                         <td className="p-4 text-center">
-                                            <div className="flex items-center justify-center space-x-2">
+                                            <div className="flex justify-center space-x-2">
                                                 {entry.fileUrl && (
-                                                    <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0089A3] text-white rounded-lg hover:bg-[#006F85] transition shadow-md">
-                                                        <FileText size={14} />
-                                                    </a>
+                                                    <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0089A3] text-white rounded-lg shadow-md"><FileText size={14} /></a>
                                                 )}
-                                                <button onClick={() => handleDelete(entry._id)} className="p-2 text-slate-300 border border-slate-200 rounded-lg hover:text-red-600 hover:border-red-200 transition active:scale-90">
-                                                    <Trash2 size={14} />
-                                                </button>
                                             </div>
                                         </td>
                                     </tr>
-                                )) : (
-                                    <tr><td colSpan="7" className="p-24 text-center text-slate-400 uppercase text-xs font-bold tracking-widest">No matching records found.</td></tr>
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <p className="text-center mt-10 text-slate-300 text-[10px] font-black uppercase tracking-[0.4em]">
-                    © 2026 Elgan integrated Ltd.
-                </p>
+                <p className="text-center mt-10 text-slate-300 text-[10px] font-black uppercase tracking-[0.4em]">© 2026 Elgan integrated Ltd.</p>
             </main>
         </div>
     );

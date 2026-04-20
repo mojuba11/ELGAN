@@ -75,7 +75,7 @@ const ManagerDashboard = () => {
     };
 
     return (
-        <div className="bg-slate-50 min-h-screen font-sans">
+        <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
             {/* --- EXECUTIVE TOP BAR --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
@@ -85,8 +85,8 @@ const ManagerDashboard = () => {
                         alt="ELGAN" 
                         className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" 
                     />
-                    <span className="text-lg md:text-xl font-bold text-slate-800 tracking-tight">
-                        ELGAN <span className="hidden md:inline text-blue-600 uppercase">Operations</span>
+                    <span className="text-lg md:text-xl font-black text-[#0089A3] tracking-tighter uppercase">
+                        Elgan <span className="text-slate-400 font-normal lowercase">operations</span>
                     </span>
                 </div>
                 
@@ -94,7 +94,7 @@ const ManagerDashboard = () => {
                     <div className="hidden sm:flex items-center space-x-3 border-r pr-4 border-slate-200">
                         <div className="text-right">
                             <p className="text-xs font-bold text-slate-800 line-clamp-1">{userName}</p>
-                            <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest text-right">Admin Access</p>
+                            <p className="text-[9px] font-bold text-[#0089A3] uppercase tracking-widest text-right">Admin Access</p>
                         </div>
                         <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200">
                             <User size={18} />
@@ -103,7 +103,7 @@ const ManagerDashboard = () => {
                     
                     <button 
                         onClick={handleLogout} 
-                        className="flex items-center justify-center bg-red-50 md:bg-transparent text-red-600 md:text-slate-500 hover:text-red-700 p-2 md:p-0 rounded-lg transition-colors font-bold text-sm"
+                        className="flex items-center justify-center bg-red-50 md:bg-transparent text-red-600 md:text-slate-400 hover:text-red-700 p-2 md:p-0 rounded-lg transition-colors font-bold text-sm"
                     >
                         <LogOut size={20} className="md:mr-2" /> 
                         <span className="hidden md:inline">Logout</span>
@@ -115,10 +115,10 @@ const ManagerDashboard = () => {
                 <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
                         <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Compliance & Audit Hub</h1>
-                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-blue-200 decoration-4 text-xs md:text-sm">Comprehensive Offshore Waste Collection Tracking.</p>
+                        <p className="text-slate-500 mt-1 font-medium italic underline decoration-[#0089A3]/30 decoration-4 text-xs md:text-sm">Offshore Waste Management System.</p>
                     </div>
-                    <div className="text-[10px] font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
-                        System Status: <span className="text-green-600 font-bold">Live</span>
+                    <div className="text-[10px] font-mono text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200 uppercase tracking-widest">
+                        Status: <span className="text-emerald-600 font-bold">Live</span>
                     </div>
                 </header>
 
@@ -129,11 +129,11 @@ const ManagerDashboard = () => {
                         <h3 className="text-xl md:text-3xl font-bold text-slate-800 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
                     </div>
                     
-                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-emerald-100 bg-emerald-50/30">
-                        <p className="text-emerald-600 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1 flex items-center">
+                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-cyan-100 bg-cyan-50/20">
+                        <p className="text-[#0089A3] text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1 flex items-center">
                             <DollarSign size={10} className="mr-1"/> 2% Assessor Fee
                         </p>
-                        <h3 className="text-xl md:text-3xl font-bold text-emerald-600 tracking-tighter">
+                        <h3 className="text-xl md:text-3xl font-bold text-[#0089A3] tracking-tighter">
                             ${assessorFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                         </h3>
                     </div>
@@ -145,22 +145,22 @@ const ManagerDashboard = () => {
 
                     <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
                         <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">Total Assets</p>
-                        <h3 className="text-xl md:text-3xl font-bold text-blue-600 tracking-tighter">{entries.length} Vessels</h3>
+                        <h3 className="text-xl md:text-3xl font-bold text-[#0089A3] tracking-tighter">{entries.length} Vessels</h3>
                     </div>
                 </div>
 
                 {/* --- FILTERS --- */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-8 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 items-end">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-8 bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 items-end shadow-slate-100">
                     <div className="md:col-span-1">
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Vessel Search</label>
                         <div className="relative">
                             <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
-                            <input className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Name/IMO..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            <input className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#0089A3]/30 transition-all font-bold" placeholder="Name/IMO..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                     </div>
                     <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Waste Class</label>
-                        <select className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold" value={wasteType} onChange={(e) => setWasteType(e.target.value)}>
+                        <select className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-[#0089A3]/30" value={wasteType} onChange={(e) => setWasteType(e.target.value)}>
                             <option value="">All Waste Types</option>
                             <option value="sludge">Oily Sludge</option>
                             <option value="plastic">Plastic</option>
@@ -170,13 +170,13 @@ const ManagerDashboard = () => {
                     </div>
                     <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">From Arrival</label>
-                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-[#0089A3]/30" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     </div>
                     <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">To Arrival</label>
-                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        <input type="date" className="w-full border border-slate-200 bg-slate-50 p-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-[#0089A3]/30" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
-                    <button onClick={resetFilters} className="bg-slate-900 text-white p-2 rounded-xl font-black text-[10px] uppercase h-[40px] hover:bg-black transition shadow-lg active:scale-95">
+                    <button onClick={resetFilters} className="bg-[#0089A3] text-white p-2 rounded-xl font-black text-[10px] uppercase h-[40px] hover:bg-[#006F85] transition shadow-lg shadow-cyan-100 active:scale-95">
                        <FilterX size={16} className="inline mr-2" /> Reset Audit
                     </button>
                 </div>
@@ -198,7 +198,7 @@ const ManagerDashboard = () => {
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {entries.length > 0 ? entries.map((entry) => (
-                                    <tr key={entry._id} className="hover:bg-blue-50/20 transition-colors">
+                                    <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors group">
                                         <td className="p-4">
                                             <div className="text-sm font-black text-slate-800 uppercase leading-none mb-1">{entry.vesselName}</div>
                                             <div className="text-[10px] text-slate-400 font-mono tracking-tighter">IMO: {entry.imoNumber}</div>
@@ -208,45 +208,49 @@ const ManagerDashboard = () => {
                                         </td>
                                         <td className="p-4 text-[11px] font-bold text-slate-700 uppercase">
                                             <div>ARR: {entry.dateOfArrival ? new Date(entry.dateOfArrival).toLocaleDateString() : 'N/A'}</div>
-                                            <div className="text-blue-500 uppercase">INS: {entry.dateOfInspection ? new Date(entry.dateOfInspection).toLocaleDateString() : 'N/A'}</div>
+                                            <div className="text-[#0089A3] uppercase">INS: {entry.dateOfInspection ? new Date(entry.dateOfInspection).toLocaleDateString() : 'N/A'}</div>
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border ${
-                                                entry.wasteType === 'hazardous' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+                                                entry.wasteType === 'hazardous' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-cyan-50 text-[#0089A3] border-cyan-100'
                                             }`}>
                                                 {entry.wasteType}
                                             </span>
                                         </td>
                                         <td className="p-4">
                                             <div className="text-sm font-black text-slate-800">{entry.volume} m³</div>
-                                            <div className="text-sm font-black text-emerald-600">${(entry.amountMade || 0).toLocaleString()}</div>
+                                            <div className="text-sm font-black text-[#0089A3]">${(entry.amountMade || 0).toLocaleString()}</div>
                                         </td>
                                         <td className="p-4">
                                             <div className="flex flex-col gap-1">
-                                                {entry.nimasaInspector && <span className="flex items-center text-[9px] font-black text-slate-500 uppercase"><CheckCircle2 size={10} className="text-green-500 mr-1" /> NIMASA</span>}
-                                                {entry.xpoInspector && <span className="flex items-center text-[9px] font-black text-slate-500 uppercase"><CheckCircle2 size={10} className="text-green-500 mr-1" /> XPO</span>}
+                                                {entry.nimasaInspector && <span className="flex items-center text-[9px] font-black text-slate-500 uppercase"><CheckCircle2 size={10} className="text-emerald-500 mr-1" /> NIMASA</span>}
+                                                {entry.xpoInspector && <span className="flex items-center text-[9px] font-black text-slate-500 uppercase"><CheckCircle2 size={10} className="text-emerald-500 mr-1" /> XPO</span>}
                                             </div>
                                         </td>
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center space-x-2">
                                                 {entry.fileUrl && (
-                                                    <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                                    <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0089A3] text-white rounded-lg hover:bg-[#006F85] transition shadow-md">
                                                         <FileText size={14} />
                                                     </a>
                                                 )}
-                                                <button onClick={() => handleDelete(entry._id)} className="p-2 text-slate-300 border border-slate-200 rounded-lg hover:text-red-600 hover:border-red-200 transition">
+                                                <button onClick={() => handleDelete(entry._id)} className="p-2 text-slate-300 border border-slate-200 rounded-lg hover:text-red-600 hover:border-red-200 transition active:scale-90">
                                                     <Trash2 size={14} />
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
                                 )) : (
-                                    <tr><td colSpan="7" className="p-24 text-center text-slate-400 uppercase text-xs font-bold tracking-widest">No matching records.</td></tr>
+                                    <tr><td colSpan="7" className="p-24 text-center text-slate-400 uppercase text-xs font-bold tracking-widest">No matching records found.</td></tr>
                                 )}
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <p className="text-center mt-10 text-slate-300 text-[10px] font-black uppercase tracking-[0.4em]">
+                    © 2026 Elgan integrated Ltd.
+                </p>
             </main>
         </div>
     );

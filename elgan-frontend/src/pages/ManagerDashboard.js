@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
     Search, FileText, FilterX, 
     LogOut, User, Trash2, Anchor, CheckCircle2, DollarSign 
-} from 'lucide-react'; // Removed BarChart3 and Send to keep clean
+} from 'lucide-react';
 
 const ManagerDashboard = () => {
     const navigate = useNavigate();
@@ -78,7 +78,7 @@ const ManagerDashboard = () => {
         <div className="bg-slate-50 min-h-screen font-sans">
             {/* --- EXECUTIVE TOP BAR --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
                     {/* Logo Integration */}
                     <img 
                         src="/elgan.jpeg" 
@@ -94,7 +94,7 @@ const ManagerDashboard = () => {
                     <div className="hidden sm:flex items-center space-x-3 border-r pr-4 border-slate-200">
                         <div className="text-right">
                             <p className="text-xs font-bold text-slate-800 line-clamp-1">{userName}</p>
-                            <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Admin Access</p>
+                            <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest text-right">Admin Access</p>
                         </div>
                         <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200">
                             <User size={18} />

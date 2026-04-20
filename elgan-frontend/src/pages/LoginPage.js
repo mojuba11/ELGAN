@@ -113,10 +113,10 @@ const LoginPage = ({ setUser }) => {
             {isLoading ? (
               <>
                 <Loader2 className="animate-spin mr-2" size={20} /> 
-                <span className="uppercase tracking-widest text-xs font-bold">Syncing Database...</span>
+                <span className="uppercase tracking-widest text-xs font-bold">Veriying Details...</span>
               </>
             ) : (
-              <span className="uppercase tracking-widest text-sm font-bold">Secure Portal Access</span>
+              <span className="uppercase tracking-widest text-sm font-bold">Access portal</span>
             )}
           </button>
         </form>
@@ -127,7 +127,7 @@ const LoginPage = ({ setUser }) => {
             © 2026 Elgan integrated Ltd.
           </p>
           <p className="text-slate-300 text-[8px] mt-2 font-medium italic">
-            Secure Offshore Asset tracking v2.1
+            Secure Offshore Waste Management System v1.0
           </p>
         </div>
       </div>

@@ -88,7 +88,7 @@ const ManagerDashboard = () => {
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
-                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase">ELGAN HQ</span>
+                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase"></span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="hidden sm:flex flex-col text-right border-r pr-6 border-slate-200">
@@ -105,9 +105,9 @@ const ManagerDashboard = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
                         <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center uppercase">
-                            <LayoutDashboard className="mr-2 text-[#0089A3]" /> Executive Console
+                            <LayoutDashboard className="mr-2 text-[#0089A3]" /> Executive Dashboard
                         </h2>
-                        <p className="text-slate-500 text-xs font-medium">Certified Surveillance & Operational Audit.</p>
+                        <p className="text-slate-500 text-xs font-medium">Offshore Waste Management System.</p>
                     </div>
                     {/* FIXED: Export Button now triggers handleExportCSV */}
                     <button 
@@ -173,7 +173,7 @@ const ManagerDashboard = () => {
 
                 <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-8 py-5 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase flex justify-between items-center">
-                       <span>Recent Fleet Operational History</span>
+                       <span>Operational History</span>
                        <span className="text-[10px] bg-cyan-100 text-[#0089A3] px-3 py-1 rounded-full">Displaying Latest 5</span>
                     </div>
                     <div className="overflow-x-auto w-full">
@@ -222,7 +222,7 @@ const ManagerDashboard = () => {
                     <div className="px-8 py-5 border-b border-slate-100 bg-slate-900 flex items-center justify-between text-white">
                         <div className="flex items-center">
                             <ClipboardList size={18} className="mr-2 text-[#0089A3]" />
-                            <h3 className="font-black text-xs uppercase tracking-widest">Financial Audit History</h3>
+                            <h3 className="font-black text-xs uppercase tracking-widest">Financial History</h3>
                         </div>
                     </div>
                     <div className="overflow-x-auto w-full">

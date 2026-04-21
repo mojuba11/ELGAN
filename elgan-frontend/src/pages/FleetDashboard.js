@@ -37,14 +37,14 @@ const FleetDashboard = () => {
         };
 
         try {
-            // Fetch Manifest Entries
+            // 1. Fetch Manifest Entries
             const entriesRes = await axios.get(`${API_BASE_URL}/api/entries/all`, config);
             setEntries(Array.isArray(entriesRes.data) ? entriesRes.data : []);
 
-            // Fetch Latest Financial Report (Directly from FinancialReportForm data)
+            // 2. Fetch Latest Financial Report (Exact data from FinancialReportForm)
             const finRes = await axios.get(`${API_BASE_URL}/api/financials/all`, config);
             if (Array.isArray(finRes.data) && finRes.data.length > 0) {
-                // We pick the most recent report submitted to reflect the current status
+                // Grab the absolute latest submitted report
                 setFinancials(finRes.data[finRes.data.length - 1]);
             }
 
@@ -104,7 +104,7 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- QUICK STATS --- */}
+                {/* --- STATS --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
                         <div className="p-4 bg-cyan-50 text-[#0089A3] rounded-xl"><Ship size={32} /></div>
@@ -148,10 +148,10 @@ const FleetDashboard = () => {
                                     <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors text-xs font-bold uppercase text-slate-700">
                                         <td className="p-4 text-[#0089A3] font-black border-r border-slate-50">{entry.vesselName}</td>
                                         <td className="p-4 font-mono border-r border-slate-50">{entry.imoNumber}</td>
-                                        <td className="p-4 border-r border-slate-50">{entry.dateOfArrival}</td>
-                                        <td className="p-4 border-r border-slate-50">{entry.mciNumber || 'N/A'}</td>
+                                        <td className="p-4 border-r border-slate-50">{entry.dateOfArrival || entry.arrivalDate || 'N/A'}</td>
+                                        <td className="p-4 border-r border-slate-50">{entry.mciNumber || entry.mciNo || 'N/A'}</td>
                                         <td className="p-4 text-orange-600 border-r border-slate-50">{entry.dateOfInspection || 'Pending'}</td>
-                                        <td className="p-4 border-r border-slate-50">{entry.terminal}</td>
+                                        <td className="p-4 border-r border-slate-50">{entry.terminal || 'N/A'}</td>
                                         <td className="p-4 border-r border-slate-50">{entry.agentName || 'Not Assigned'}</td>
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end space-x-2">
@@ -168,13 +168,17 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- FINANCIALS (Exact Data From FinancialReportForm) --- */}
+                {/* --- FINANCIAL SUMMARY (PULLS DIRECT FROM FINANCIALREPORTFORM) --- */}
                 <div className="bg-slate-900 rounded-3xl shadow-xl overflow-hidden border border-slate-800">
                     <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center text-white">
                         <h2 className="font-black text-sm uppercase tracking-[0.2em] flex items-center">
                            <DollarSign size={20} className="mr-2 text-[#0089A3]" /> Monthly Revenue Summary
                         </h2>
-                        {financials && <span className="text-[10px] font-black bg-white/10 px-4 py-1 rounded-full uppercase tracking-widest text-[#0089A3]">Period: {financials.reportMonth}</span>}
+                        {financials && (
+                            <span className="text-[10px] font-black bg-white/10 px-4 py-1 rounded-full uppercase tracking-widest text-[#0089A3]">
+                                Report Period: {financials.reportMonth}
+                            </span>
+                        )}
                     </div>
                     <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
@@ -184,7 +188,7 @@ const FleetDashboard = () => {
                             </h4>
                         </div>
                         <div className="md:text-right">
-                            <p className="text-[10px] font-black text-[#0089A3] uppercase tracking-widest mb-2">2% Assessor Fee (Calculated)</p>
+                            <p className="text-[10px] font-black text-[#0089A3] uppercase tracking-widest mb-2">2% Assessor Fee (Reported)</p>
                             <h4 className="text-4xl font-black text-[#0089A3] tracking-tighter">
                                 ${financials ? Number(financials.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00'}
                             </h4>
@@ -202,12 +206,12 @@ const FleetDashboard = () => {
                             <button onClick={() => setShowModal(false)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all"><X size={24} /></button>
                         </div>
                         <div className="p-10 grid grid-cols-2 gap-y-8 gap-x-12 text-sm uppercase border-b border-slate-50">
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Vessel Name</p><p className="font-black text-slate-800 text-lg">{selectedEntry.vesselName}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1">IMO Number</p><p className="font-bold text-slate-800">{selectedEntry.imoNumber}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Agent Name</p><p className="font-bold text-slate-800">{selectedEntry.agentName || 'N/A'}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1">MCI Number</p><p className="font-bold text-slate-800">{selectedEntry.mciNumber || 'N/A'}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Arrival Date</p><p className="font-bold text-slate-800">{selectedEntry.dateOfArrival}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Inspection Date</p><p className="font-bold text-orange-600">{selectedEntry.dateOfInspection}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Vessel Name</p><p className="font-black text-slate-800 text-lg">{selectedEntry.vesselName}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">IMO Number</p><p className="font-bold text-slate-800">{selectedEntry.imoNumber}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Agent Name</p><p className="font-bold text-slate-800">{selectedEntry.agentName || 'N/A'}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">MCI Number</p><p className="font-bold text-slate-800">{selectedEntry.mciNumber || 'N/A'}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Arrival Date</p><p className="font-bold text-slate-800">{selectedEntry.dateOfArrival || 'N/A'}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Inspection Date</p><p className="font-bold text-orange-600">{selectedEntry.dateOfInspection || 'Pending'}</p></div>
                         </div>
                         <div className="px-10 py-6 bg-slate-50 flex justify-between items-center">
                             <div className="flex flex-col">
@@ -216,11 +220,11 @@ const FleetDashboard = () => {
                             </div>
                             <div className="flex space-x-3">
                                 {selectedEntry.fileUrl && (
-                                    <a href={`${API_BASE_URL}/uploads/${selectedEntry.fileUrl}`} target="_blank" rel="noreferrer" className="flex items-center bg-[#0089A3] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase">
+                                    <a href={`${API_BASE_URL}/uploads/${selectedEntry.fileUrl}`} target="_blank" rel="noreferrer" className="flex items-center bg-[#0089A3] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">
                                         <Download size={14} className="mr-2" /> Manifest
                                     </a>
                                 )}
-                                <button onClick={() => setShowModal(false)} className="bg-slate-200 text-slate-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase">Close</button>
+                                <button onClick={() => setShowModal(false)} className="bg-slate-200 text-slate-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">Close</button>
                             </div>
                         </div>
                     </div>

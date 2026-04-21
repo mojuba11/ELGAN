@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { 
-    Plus, Download, Edit, LogOut, User, 
+    Plus, Download, Edit, LogOut, 
     Ship, ClipboardCheck, HardDrive, DollarSign, Eye, X 
-} from 'lucide-react'; 
+} from 'lucide-react'; // Removed 'User' to fix the build error
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {
@@ -37,9 +37,11 @@ const FleetDashboard = () => {
         };
 
         try {
+            // Fetch Manifest Entries
             const entriesRes = await axios.get(`${API_BASE_URL}/api/entries/all`, config);
             setEntries(Array.isArray(entriesRes.data) ? entriesRes.data : []);
 
+            // Fetch Latest Financial Report
             const finRes = await axios.get(`${API_BASE_URL}/api/financials/all`, config);
             if (Array.isArray(finRes.data) && finRes.data.length > 0) {
                 setFinancials(finRes.data[finRes.data.length - 1]);
@@ -119,12 +121,11 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- THE FIXED TABLE --- */}
+                {/* --- SEPARATED TABLE --- */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase">
                        Operational History
                     </div>
-                    {/* Horizontal scroll enabled container */}
                     <div className="overflow-x-auto w-full">
                         <table className="w-full text-left border-collapse min-w-[1500px]">
                             <thead>

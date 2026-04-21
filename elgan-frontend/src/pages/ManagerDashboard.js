@@ -17,7 +17,6 @@ const ManagerDashboard = () => {
     const [endDate, setEndDate] = useState('');
     const [userName, setUserName] = useState('Operational Manager');
 
-    // Modal State
     const [selectedEntry, setSelectedEntry] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
@@ -53,22 +52,39 @@ const ManagerDashboard = () => {
         if (storedName) setUserName(storedName);
     }, [fetchAllData]);
 
+    // --- EXECUTIVE COMMAND: EXPORT TO CSV ---
+    const handleExportCSV = () => {
+        if (entries.length === 0) return alert("No data available to export");
+
+        const headers = ["Vessel Name, IMO Number, Arrival Date, MCI Number, Inspection Date, Terminal, Agent Name, Volume (m3), Waste Type\n"];
+        const rows = entries.map(e => 
+            `"${e.vesselName}","${e.imoNumber}","${e.dateOfArrival}","${e.mciNumber || 'N/A'}","${e.dateOfInspection}","${e.terminal}","${e.agentName || 'N/A'}","${e.volume}","${e.wasteType}"`
+        ).join("\n");
+
+        const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Elgan_Fleet_Report_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const handleViewDetails = (entry) => {
         setSelectedEntry(entry);
         setShowModal(true);
     };
 
-    // CALCULATIONS
     const totalRevenue = entries.reduce((acc, curr) => acc + (Number(curr.amountMade) || 0), 0);
     const totalVolume = entries.reduce((acc, curr) => acc + (Number(curr.volume) || 0), 0);
     const assessorFeeTotal = totalRevenue * 0.02;
 
-    // LIMIT TO TOP 5 ENTRIES FOR THE TABLE PREVIEW
     const displayedEntries = entries.slice(0, 5);
 
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
-            {/* --- NAVIGATION --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
@@ -86,8 +102,6 @@ const ManagerDashboard = () => {
             </nav>
 
             <main className="p-4 md:p-8 max-w-[1800px] mx-auto">
-                
-                {/* --- EXECUTIVE COMMAND BAR --- */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
                         <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center uppercase">
@@ -95,12 +109,15 @@ const ManagerDashboard = () => {
                         </h2>
                         <p className="text-slate-500 text-xs font-medium">Certified Surveillance & Operational Audit.</p>
                     </div>
-                    <button className="bg-slate-800 text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-95 flex items-center">
+                    {/* FIXED: Export Button now triggers handleExportCSV */}
+                    <button 
+                        onClick={handleExportCSV}
+                        className="bg-slate-800 text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-95 flex items-center"
+                    >
                         <Download size={16} className="mr-2" /> Export Fleet Audit
                     </button>
                 </div>
 
-                {/* --- ANALYTICS PANEL --- */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Gross Revenue</p>
@@ -120,7 +137,7 @@ const ManagerDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- FILTERS --- */}
+                {/* FILTERS */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-8 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm items-end">
                     <div className="md:col-span-1">
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-1">Asset Search</label>
@@ -154,7 +171,6 @@ const ManagerDashboard = () => {
                     </button>
                 </div>
 
-                {/* --- SEPARATED OPERATIONAL LOG TABLE (TOP 5) --- */}
                 <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-8 py-5 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase flex justify-between items-center">
                        <span>Recent Fleet Operational History</span>
@@ -175,18 +191,19 @@ const ManagerDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {displayedEntries.length > 0 ? displayedEntries.map((entry) => (
+                                {displayedEntries.map((entry) => (
                                     <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors group text-xs font-bold uppercase text-slate-700">
                                         <td className="p-5 text-[#0089A3] font-black border-r border-slate-50">{entry.vesselName}</td>
                                         <td className="p-5 font-mono border-r border-slate-50">{entry.imoNumber}</td>
-                                        <td className="p-5 border-r border-slate-50">{entry.dateOfArrival || entry.arrivalDate || 'N/A'}</td>
-                                        <td className="p-5 border-r border-slate-50">{entry.mciNumber || entry.mciNo || 'N/A'}</td>
+                                        <td className="p-5 border-r border-slate-50">{entry.dateOfArrival || 'N/A'}</td>
+                                        <td className="p-5 border-r border-slate-50">{entry.mciNumber || 'N/A'}</td>
                                         <td className="p-5 text-orange-600 border-r border-slate-50">{entry.dateOfInspection || 'Pending'}</td>
                                         <td className="p-5 border-r border-slate-50">{entry.terminal}</td>
-                                        <td className="p-5 border-r border-slate-50">{entry.agentName || 'Not Assigned'}</td>
+                                        <td className="p-5 border-r border-slate-50">{entry.agentName || 'N/A'}</td>
                                         <td className="p-5 text-right">
                                             <div className="flex justify-end gap-2">
                                                 <button onClick={() => handleViewDetails(entry)} className="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-[#0089A3] hover:text-white transition-all"><Eye size={16} /></button>
+                                                {/* FIXED: Static link path ensuring it calls the Backend Static Route */}
                                                 {entry.fileUrl && (
                                                     <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-100 text-[#0089A3] rounded-lg hover:bg-[#0089A3] hover:text-white transition-all">
                                                         <FileText size={16} />
@@ -195,15 +212,12 @@ const ManagerDashboard = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                )) : (
-                                    <tr><td colSpan="8" className="p-10 text-center text-slate-400 uppercase text-xs font-bold">No entries found.</td></tr>
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                {/* --- FINANCIAL AUDIT HISTORY --- */}
                 <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-8 py-5 border-b border-slate-100 bg-slate-900 flex items-center justify-between text-white">
                         <div className="flex items-center">
@@ -222,7 +236,7 @@ const ManagerDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs font-bold uppercase text-slate-700">
-                                {financials.length > 0 ? financials.map((fin) => (
+                                {financials.map((fin) => (
                                     <tr key={fin._id} className="hover:bg-slate-50 transition-colors">
                                         <td className="p-5">{fin.reportMonth}</td>
                                         <td className="p-5">${Number(fin.totalIncome).toLocaleString()}</td>
@@ -231,9 +245,7 @@ const ManagerDashboard = () => {
                                             <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[9px] font-black uppercase border border-emerald-100 tracking-widest">Verified</span>
                                         </td>
                                     </tr>
-                                )) : (
-                                    <tr><td colSpan="4" className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No records found.</td></tr>
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -242,7 +254,7 @@ const ManagerDashboard = () => {
                 <p className="text-center mt-12 text-slate-300 text-[10px] font-black uppercase tracking-[0.4em]">© 2026 Elgan integrated Ltd.</p>
             </main>
 
-            {/* --- DETAILS MODAL --- */}
+            {/* DETAILS MODAL */}
             {showModal && selectedEntry && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
                     <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
@@ -271,7 +283,7 @@ const ManagerDashboard = () => {
                             <div className="flex space-x-3">
                                 {selectedEntry.fileUrl && (
                                     <a href={`${API_BASE_URL}/uploads/${selectedEntry.fileUrl}`} target="_blank" rel="noreferrer" className="flex items-center bg-[#0089A3] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#006F85] transition-all">
-                                        <Download size={14} className="mr-2" /> Manifest
+                                        <Download size={14} className="mr-2" /> Download Manifest
                                     </a>
                                 )}
                                 <button onClick={() => setShowModal(false)} className="bg-slate-200 text-slate-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">Close</button>

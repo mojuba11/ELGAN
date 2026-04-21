@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Ship, Anchor, FilePlus, ArrowLeft, Loader2, DollarSign } from 'lucide-react';
+import { Ship, Anchor, FilePlus, ArrowLeft, Loader2 } from 'lucide-react';
 
 const EntryForm = () => {
     const navigate = useNavigate();
@@ -16,7 +16,6 @@ const EntryForm = () => {
         chartererName: '',
         wasteType: 'sludge', 
         volume: '', 
-        amountMade: '', 
         dateOfArrival: '', 
         dateOfInspection: '',
         nimasaInspector: false, 
@@ -25,9 +24,11 @@ const EntryForm = () => {
 
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+    // --- SESSION VALIDATION ---
     useEffect(() => {
         const token = localStorage.getItem('elgan_token');
         if (!token) {
+            console.warn("Unauthorized access attempt. Redirecting...");
             navigate('/login');
         }
     }, [navigate]);
@@ -42,14 +43,15 @@ const EntryForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // 1. Get and clean token (removes hidden quotes/spaces)
+        // 1. Get and AGGRESSIVELY clean token (removes all hidden quotes/spaces)
         let token = localStorage.getItem('elgan_token');
         if (token) {
-            token = token.replace(/^["'](.+(?=["']$))["']$/, '$1').trim();
+            token = token.replace(/['"]+/g, '').trim(); 
         }
 
-        if (!token) {
-            alert("Session expired. Please log in again.");
+        if (!token || token === 'null' || token === 'undefined') {
+            alert("Your session has expired. Please log in again.");
+            localStorage.clear();
             window.location.href = '/login';
             return;
         }
@@ -58,9 +60,13 @@ const EntryForm = () => {
 
         const data = new FormData();
         Object.keys(formData).forEach(key => {
+            // Append data that isn't null
             if (formData[key] !== null) data.append(key, formData[key]);
         });
-        if (file) data.append('manifestScan', file);
+        
+        if (file) {
+            data.append('manifestScan', file);
+        }
 
         try {
             await axios.post(`${API_BASE_URL}/api/entries/add`, data, {
@@ -73,9 +79,10 @@ const EntryForm = () => {
             alert("Entry Authorized & Recorded Successfully.");
             navigate('/fleet');
         } catch (err) {
-            console.error("Submission Error:", err.response?.status);
+            console.error("Submission Error Status:", err.response?.status);
+            
             if (err.response?.status === 401) {
-                alert("Authentication failed. Session refreshed required.");
+                alert("Authentication failed. Please log in again to refresh your session.");
                 localStorage.clear();
                 window.location.href = '/login';
             } else {
@@ -89,41 +96,56 @@ const EntryForm = () => {
     return (
         <div className="bg-slate-50 min-h-screen p-4 md:p-8 font-sans">
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+                
+                {/* BRANDED TOP BAR */}
                 <div className="bg-[#0089A3] p-6 flex justify-between items-center text-white">
                     <div className="flex items-center space-x-3">
                         <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto bg-white rounded-lg p-1" />
-                        <h2 className="text-xl font-black uppercase tracking-tighter">New Asset Entry</h2>
+                        <h2 className="text-xl font-black uppercase tracking-tighter text-white">New Asset Entry</h2>
                     </div>
-                    <button onClick={() => navigate('/fleet')} className="bg-white/10 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all">
+                    <button 
+                        onClick={() => navigate('/fleet')} 
+                        className="bg-white/10 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all text-white"
+                    >
                         <ArrowLeft size={16} className="inline mr-1" /> Back
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* LEFT COLUMN: VESSEL INFO */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
                                 <Ship size={14} className="mr-2 text-[#0089A3]" /> Vessel Identification
                             </label>
-                            <input name="vesselName" placeholder="Vessel Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold" />
-                            <input name="imoNumber" placeholder="IMO Number" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold" />
+                            <input name="vesselName" placeholder="Vessel Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
+                            <input name="imoNumber" placeholder="IMO Number" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                         </div>
+
+                        {/* RIGHT COLUMN: TERMINAL INFO */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
                                 <Anchor size={14} className="mr-2 text-[#0089A3]" /> Deployment Details
                             </label>
-                            <input name="terminal" placeholder="Terminal/Berth" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold" />
+                            <input name="terminal" placeholder="Terminal/Berth" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                             <div className="grid grid-cols-2 gap-4">
-                                <input type="date" name="dateOfArrival" onChange={handleChange} required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold" />
-                                <input type="date" name="dateOfInspection" onChange={handleChange} required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold" />
+                                <div>
+                                    <p className="text-[9px] font-bold text-slate-400 mb-1 ml-1 uppercase">Arrival Date</p>
+                                    <input type="date" name="dateOfArrival" onChange={handleChange} required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700" />
+                                </div>
+                                <div>
+                                    <p className="text-[9px] font-bold text-slate-400 mb-1 ml-1 uppercase">Inspect Date</p>
+                                    <input type="date" name="dateOfInspection" onChange={handleChange} required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700" />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-cyan-50/50 p-6 rounded-3xl border border-cyan-100 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* METRICS PANEL */}
+                    <div className="bg-cyan-50/50 p-6 rounded-3xl border border-cyan-100 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="text-[10px] font-black text-[#0089A3] uppercase block mb-2 ml-1">Waste Category</label>
-                            <select name="wasteType" onChange={handleChange} value={formData.wasteType} className="w-full p-4 bg-white border border-cyan-200 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#0089A3]">
+                            <select name="wasteType" onChange={handleChange} value={formData.wasteType} className="w-full p-4 bg-white border border-cyan-200 rounded-2xl font-bold outline-none focus:ring-2 focus:ring-[#0089A3] text-slate-700">
                                 <option value="sludge">Oily Sludge</option>
                                 <option value="plastic">Plastic</option>
                                 <option value="garbage">Garbage</option>
@@ -132,17 +154,11 @@ const EntryForm = () => {
                         </div>
                         <div>
                             <label className="text-[10px] font-black text-[#0089A3] uppercase block mb-2 ml-1">Quantity (m³)</label>
-                            <input name="volume" type="number" step="0.01" placeholder="0.00" onChange={handleChange} required className="w-full p-4 bg-white border border-cyan-200 rounded-2xl font-black text-[#0089A3] outline-none focus:ring-2 focus:ring-[#0089A3]" />
-                        </div>
-                        <div>
-                            <label className="text-[10px] font-black text-emerald-600 uppercase block mb-2 ml-1">Gross Revenue (USD)</label>
-                            <div className="relative">
-                                <DollarSign className="absolute left-3 top-4 text-emerald-500" size={20} />
-                                <input name="amountMade" type="number" placeholder="0.00" onChange={handleChange} required className="w-full pl-10 p-4 bg-white border border-emerald-200 rounded-2xl font-black text-emerald-600 outline-none focus:ring-2 focus:ring-emerald-500" />
-                            </div>
+                            <input name="volume" type="number" step="0.01" placeholder="0.00" onChange={handleChange} required className="w-full p-4 bg-white border border-cyan-200 rounded-2xl font-black text-xl text-[#0089A3] outline-none focus:ring-2 focus:ring-[#0089A3]" />
                         </div>
                     </div>
 
+                    {/* FILE UPLOAD PANEL */}
                     <div className="group relative border-2 border-dashed border-slate-200 p-8 rounded-3xl text-center hover:border-[#0089A3] transition-all bg-slate-50">
                         <input type="file" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                         <FilePlus className="text-slate-300 mx-auto mb-2" size={40} />
@@ -150,8 +166,12 @@ const EntryForm = () => {
                         {file && <p className="mt-2 text-sm font-black text-[#0089A3] bg-cyan-50 px-4 py-1 rounded-full border border-cyan-100 inline-block">{file.name}</p>}
                     </div>
 
-                    <button type="submit" disabled={isLoading} className="w-full bg-[#0089A3] text-white p-5 rounded-2xl font-black uppercase tracking-widest hover:bg-[#006F85] transition-all disabled:bg-slate-300 shadow-xl shadow-cyan-100">
-                        {isLoading ? <Loader2 className="animate-spin mx-auto" /> : "Authorize and Sync Entry"}
+                    <button 
+                        type="submit" 
+                        disabled={isLoading} 
+                        className="w-full bg-[#0089A3] text-white p-5 rounded-2xl font-black uppercase tracking-widest hover:bg-[#006F85] transition-all disabled:bg-slate-300 shadow-xl shadow-cyan-100 text-lg"
+                    >
+                        {isLoading ? <Loader2 className="animate-spin mx-auto text-white" /> : "Authorize and Sync Entry"}
                     </button>
                 </form>
             </div>

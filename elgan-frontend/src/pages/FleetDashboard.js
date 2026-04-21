@@ -73,7 +73,7 @@ const FleetDashboard = () => {
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg" />
-                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">ELGAN</span>
+                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter"></span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="text-right hidden sm:block">

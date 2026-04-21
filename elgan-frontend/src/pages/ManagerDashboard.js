@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
-    Search, FileText, FilterX, LogOut, CheckCircle2, 
-    DollarSign, Ship, Download, Eye, LayoutDashboard,
-    ClipboardList, TrendingUp, X
-} from 'lucide-react';
+    Search, FileText, FilterX, LogOut, 
+    Download, Eye, LayoutDashboard,
+    ClipboardList, X
+} from 'lucide-react'; // Removed CheckCircle2, DollarSign, Ship, and TrendingUp
 
 const ManagerDashboard = () => {
     const navigate = useNavigate();
@@ -68,7 +68,7 @@ const ManagerDashboard = () => {
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
-                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase">ELGAN <span className="text-slate-400 font-light">HQ</span></span>
+                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase">ELGAN HQ</span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="hidden sm:flex flex-col text-right border-r pr-6 border-slate-200">
@@ -102,9 +102,9 @@ const ManagerDashboard = () => {
                         <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Gross Revenue</p>
                         <h3 className="text-3xl font-black text-slate-900 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
                     </div>
-                    <div className="bg-[#0089A3] p-6 rounded-2xl shadow-xl shadow-cyan-100">
+                    <div className="bg-[#0089A3] p-6 rounded-2xl shadow-xl shadow-cyan-100 text-white">
                         <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-2">Total 2% Assessor Fee</p>
-                        <h3 className="text-3xl font-black text-white tracking-tighter">${assessorFeeTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</h3>
+                        <h3 className="text-3xl font-black tracking-tighter">${assessorFeeTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Operational Volume</p>
@@ -183,7 +183,7 @@ const ManagerDashboard = () => {
                                             <div className="flex justify-end gap-2">
                                                 <button onClick={() => handleViewDetails(entry)} className="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-[#0089A3] hover:text-white transition-all"><Eye size={16} /></button>
                                                 {entry.fileUrl && (
-                                                    <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-100 text-[#0089A3] rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
+                                                    <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-100 text-[#0089A3] rounded-lg hover:bg-[#0089A3] hover:text-white transition-all">
                                                         <FileText size={16} />
                                                     </a>
                                                 )}

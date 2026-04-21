@@ -11,18 +11,28 @@ function App() {
   const [user, setUser] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  // --- 1. Load Session on startup ---
   useEffect(() => {
     const savedUser = localStorage.getItem('elgan_user');
     if (savedUser) {
       try {
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
+        setUser(JSON.parse(savedUser));
       } catch (e) {
         localStorage.clear();
       }
     }
     setIsInitialLoad(false);
   }, []);
+
+  // --- 2. Corrected Cleanup Logic ---
+  // We ONLY remove items if user is null AND we are not in the middle of loading
+  useEffect(() => {
+    if (!isInitialLoad && user === null) {
+      localStorage.removeItem('elgan_user');
+      localStorage.removeItem('elgan_token');
+      localStorage.removeItem('elgan_user_name');
+    }
+  }, [user, isInitialLoad]);
 
   if (isInitialLoad) {
     return (
@@ -36,13 +46,11 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Public Access */}
           <Route 
             path="/login" 
             element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />} 
           />
 
-          {/* Fleet Protected Routes */}
           <Route 
             path="/fleet" 
             element={user?.role === 'fleet' ? <FleetDashboard /> : <Navigate to="/login" replace />} 
@@ -56,14 +64,11 @@ function App() {
             element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
           />
 
-          {/* Manager Protected Routes */}
           <Route 
             path="/manager" 
             element={user?.role === 'manager' ? <ManagerDashboard /> : <Navigate to="/login" replace />} 
           />
 
-          {/* Fallbacks */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

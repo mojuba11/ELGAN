@@ -91,7 +91,7 @@ const FleetDashboard = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Operation Dashboard</h1>
-                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-[#0089A3]/30 text-sm">Certified Asset tracking.</p>
+                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-[#0089A3]/30 text-sm">Offshore Waste Management System.</p>
                     </div>
                     <div className="flex space-x-3 w-full md:w-auto">
                         <button onClick={() => navigate('/financial-report')} className="flex-1 md:flex-none flex items-center justify-center bg-slate-800 text-white px-5 py-4 rounded-xl hover:bg-black transition-all shadow-lg font-bold text-xs uppercase">

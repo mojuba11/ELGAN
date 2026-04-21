@@ -8,39 +8,37 @@ import FinancialReportForm from './pages/FinancialReportForm';
 import './App.css'; 
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-  // --- 1. Load Session on startup ---
-  useEffect(() => {
+  // --- 1. INSTANT SESSION RECOVERY ---
+  // We check LocalStorage IMMEDIATELY so the state isn't null on tab switch
+  const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('elgan_user');
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        localStorage.clear();
-      }
+    if (!savedUser) return null;
+    try {
+      const parsed = JSON.parse(savedUser);
+      return (parsed && parsed.role) ? parsed : null;
+    } catch (e) {
+      return null;
     }
-    setIsInitialLoad(false);
+  });
+
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    // Small delay to ensure the DOM and Storage are synced
+    setIsReady(true);
   }, []);
 
-  // --- 2. Corrected Cleanup Logic ---
-  // We ONLY remove items if user is null AND we are not in the middle of loading
+  // --- 2. SELECTIVE CLEANUP ---
+  // Only wipe storage if the user is EXPLICITLY null (meaning they clicked Logout)
   useEffect(() => {
-    if (!isInitialLoad && user === null) {
+    if (isReady && user === null) {
       localStorage.removeItem('elgan_user');
       localStorage.removeItem('elgan_token');
       localStorage.removeItem('elgan_user_name');
     }
-  }, [user, isInitialLoad]);
+  }, [user, isReady]);
 
-  if (isInitialLoad) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-[#0089A3] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  if (!isReady) return null; // Prevent flicker on load
 
   return (
     <Router>
@@ -51,6 +49,7 @@ function App() {
             element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />} 
           />
 
+          {/* Role-Protected Fleet Routes */}
           <Route 
             path="/fleet" 
             element={user?.role === 'fleet' ? <FleetDashboard /> : <Navigate to="/login" replace />} 
@@ -64,11 +63,13 @@ function App() {
             element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
           />
 
+          {/* Role-Protected Manager Routes */}
           <Route 
             path="/manager" 
             element={user?.role === 'manager' ? <ManagerDashboard /> : <Navigate to="/login" replace />} 
           />
 
+          {/* Catch-all */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

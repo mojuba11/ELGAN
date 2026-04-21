@@ -3,7 +3,7 @@ import axios from 'axios';
 import { 
     Plus, Download, Edit, LogOut, 
     Ship, ClipboardCheck, HardDrive, DollarSign, Eye, X 
-} from 'lucide-react'; // Removed 'User' to fix the build error
+} from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {
@@ -41,9 +41,10 @@ const FleetDashboard = () => {
             const entriesRes = await axios.get(`${API_BASE_URL}/api/entries/all`, config);
             setEntries(Array.isArray(entriesRes.data) ? entriesRes.data : []);
 
-            // Fetch Latest Financial Report
+            // Fetch Latest Financial Report (Directly from FinancialReportForm data)
             const finRes = await axios.get(`${API_BASE_URL}/api/financials/all`, config);
             if (Array.isArray(finRes.data) && finRes.data.length > 0) {
+                // We pick the most recent report submitted to reflect the current status
                 setFinancials(finRes.data[finRes.data.length - 1]);
             }
 
@@ -74,7 +75,7 @@ const FleetDashboard = () => {
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg" />
-                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter"></span>
+                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">ELGAN</span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="text-right hidden sm:block">
@@ -103,7 +104,7 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- STATS --- */}
+                {/* --- QUICK STATS --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
                         <div className="p-4 bg-cyan-50 text-[#0089A3] rounded-xl"><Ship size={32} /></div>
@@ -167,7 +168,7 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- FINANCIALS --- */}
+                {/* --- FINANCIALS (Exact Data From FinancialReportForm) --- */}
                 <div className="bg-slate-900 rounded-3xl shadow-xl overflow-hidden border border-slate-800">
                     <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center text-white">
                         <h2 className="font-black text-sm uppercase tracking-[0.2em] flex items-center">
@@ -177,13 +178,13 @@ const FleetDashboard = () => {
                     </div>
                     <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Gross Monthly Income</p>
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Total Monthly Income (Reported)</p>
                             <h4 className="text-4xl font-black text-white tracking-tighter">
                                 ${financials ? Number(financials.totalIncome).toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00'}
                             </h4>
                         </div>
                         <div className="md:text-right">
-                            <p className="text-[10px] font-black text-[#0089A3] uppercase tracking-widest mb-2">2% Assessor Fee</p>
+                            <p className="text-[10px] font-black text-[#0089A3] uppercase tracking-widest mb-2">2% Assessor Fee (Calculated)</p>
                             <h4 className="text-4xl font-black text-[#0089A3] tracking-tighter">
                                 ${financials ? Number(financials.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00'}
                             </h4>

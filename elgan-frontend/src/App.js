@@ -11,18 +11,12 @@ function App() {
   const [user, setUser] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // --- 1. BOOTSTRAP SESSION ONCE ---
   useEffect(() => {
     const savedUser = localStorage.getItem('elgan_user');
     if (savedUser) {
       try {
-        const parsed = JSON.parse(savedUser);
-        // Safety check for valid roles
-        if (parsed && (parsed.role === 'fleet' || parsed.role === 'manager')) {
-          setUser(parsed);
-        } else {
-          localStorage.clear();
-        }
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
       } catch (e) {
         localStorage.clear();
       }
@@ -30,23 +24,10 @@ function App() {
     setIsInitialLoad(false);
   }, []);
 
-  // --- 2. CLEANUP LOGIC ---
-  useEffect(() => {
-    if (!user && !isInitialLoad) {
-      localStorage.removeItem('elgan_user');
-      localStorage.removeItem('elgan_token');
-      localStorage.removeItem('elgan_user_name');
-    }
-  }, [user, isInitialLoad]);
-
-  // Prevent routing until the session check is finished
   if (isInitialLoad) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center font-sans">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#0089A3] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-[#0089A3] font-black uppercase tracking-widest text-[10px]">Verifying Session...</p>
-        </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#0089A3] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -55,17 +36,13 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* --- PUBLIC ACCESS --- */}
+          {/* Public Access */}
           <Route 
             path="/login" 
-            element={!user ? (
-              <LoginPage setUser={setUser} />
-            ) : (
-              <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />
-            )} 
+            element={!user ? <LoginPage setUser={setUser} /> : <Navigate to={user.role === 'manager' ? '/manager' : '/fleet'} replace />} 
           />
 
-          {/* --- FLEET PERSONNEL PROTECTED ROUTES --- */}
+          {/* Fleet Protected Routes */}
           <Route 
             path="/fleet" 
             element={user?.role === 'fleet' ? <FleetDashboard /> : <Navigate to="/login" replace />} 
@@ -79,13 +56,13 @@ function App() {
             element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
           />
 
-          {/* --- ADMIN PROTECTED ROUTES --- */}
+          {/* Manager Protected Routes */}
           <Route 
             path="/manager" 
             element={user?.role === 'manager' ? <ManagerDashboard /> : <Navigate to="/login" replace />} 
           />
 
-          {/* --- FALLBACKS --- */}
+          {/* Fallbacks */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

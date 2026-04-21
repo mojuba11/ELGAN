@@ -128,7 +128,7 @@ const ManagerDashboard = () => {
                         <h3 className="text-3xl font-black tracking-tighter">${assessorFeeTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Operational Volume</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Tota Waste Volume</p>
                         <h3 className="text-3xl font-black text-orange-600 tracking-tighter">{totalVolume.toFixed(2)} m³</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">

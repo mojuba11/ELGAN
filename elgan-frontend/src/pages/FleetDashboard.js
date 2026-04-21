@@ -70,7 +70,7 @@ const FleetDashboard = () => {
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" />
                     <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">
-                        ELGAN <span className="text-slate-400 font-normal lowercase">fleet</span>
+                        <span className="text-slate-400 font-normal lowercase"></span>
                     </span>
                 </div>
                 <div className="flex items-center space-x-6">

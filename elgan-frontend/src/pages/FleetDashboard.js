@@ -74,7 +74,7 @@ const FleetDashboard = () => {
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg" />
-                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">ELGAN</span>
+                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter"></span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="text-right hidden sm:block">
@@ -90,7 +90,7 @@ const FleetDashboard = () => {
             <main className="p-4 md:p-8 max-w-[1800px] mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Fleet Operations</h1>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Operation Dashboard</h1>
                         <p className="text-slate-500 font-medium mt-1 italic underline decoration-[#0089A3]/30 text-sm">Certified Asset tracking.</p>
                     </div>
                     <div className="flex space-x-3 w-full md:w-auto">

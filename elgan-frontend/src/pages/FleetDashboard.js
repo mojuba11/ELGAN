@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Plus, Download, Edit, LogOut, User, Ship, ClipboardCheck, Clock, HardDrive, Anchor, DollarSign } from 'lucide-react'; 
+import { 
+    Plus, Download, Edit, LogOut, User, 
+    Ship, ClipboardCheck, Clock, HardDrive, Anchor, DollarSign 
+} from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {
@@ -31,7 +34,7 @@ const FleetDashboard = () => {
         } catch (err) {
             console.error("Fleet Data Error:", err);
             setLoading(false);
-            // GENTLE ERROR: Don't logout immediately. Only logout if the token is completely missing.
+            // GENTLE ERROR: Only logout if token is actually missing from storage
             if (err.response?.status === 401 && !localStorage.getItem('elgan_token')) {
                 localStorage.clear();
                 window.location.href = '/login';
@@ -45,6 +48,7 @@ const FleetDashboard = () => {
         if (storedName) setUserName(storedName);
     }, [fetchMyEntries]);
 
+    // Derived Stats
     const totalSubmissions = entries?.length || 0;
     const recentVol = entries?.reduce((acc, curr) => acc + (Number(curr.volume) || 0), 0) || 0;
     const totalRevenue = entries?.reduce((acc, curr) => acc + (Number(curr.amountMade) || 0), 0) || 0;
@@ -52,18 +56,23 @@ const FleetDashboard = () => {
 
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
+            {/* --- NAVIGATION --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
-                    <span className="text-xl font-black text-[#0089A3] uppercase">ELGAN <span className="text-slate-400 font-normal lowercase">fleet</span></span>
+                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">
+                        ELGAN <span className="text-slate-400 font-normal lowercase">fleet</span>
+                    </span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="hidden sm:flex items-center space-x-3 border-r pr-6 border-slate-200">
                         <div className="text-right">
                             <p className="text-sm font-bold text-slate-800">{userName}</p>
-                            <p className="text-[10px] font-bold text-[#0089A3] uppercase">Field Personnel</p>
+                            <p className="text-[10px] font-bold text-[#0089A3] uppercase tracking-widest">Field Personnel</p>
                         </div>
-                        <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200"><User size={20} /></div>
+                        <div className="bg-slate-100 p-2 rounded-full text-slate-600 border border-slate-200">
+                            <User size={20} />
+                        </div>
                     </div>
                     <button onClick={handleLogout} className="flex items-center text-slate-400 hover:text-red-600 transition-colors font-bold text-sm">
                         <LogOut size={18} className="mr-2" /> Logout
@@ -87,52 +96,85 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
+                {/* --- QUICK STATS --- */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                         <div className="p-3 bg-cyan-50 text-[#0089A3] rounded-xl w-fit mb-4"><Ship size={24} /></div>
-                        <p className="text-slate-400 text-[10px] font-black uppercase">Vessels Inspected</p>
-                        <h3 className="text-3xl font-bold">{totalSubmissions}</h3>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Vessels Inspected</p>
+                        <h3 className="text-3xl font-bold tracking-tighter text-slate-800">{totalSubmissions}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                         <div className="p-3 bg-orange-50 text-orange-600 rounded-xl w-fit mb-4"><Clock size={24} /></div>
-                        <p className="text-slate-400 text-[10px] font-black uppercase">Verification</p>
-                        <h3 className="text-3xl font-bold">0</h3>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Verification Status</p>
+                        <h3 className="text-3xl font-bold tracking-tighter text-slate-800">0</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                         <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl w-fit mb-4"><HardDrive size={24} /></div>
-                        <p className="text-slate-400 text-[10px] font-black uppercase">Total Volume (m³)</p>
-                        <h3 className="text-3xl font-bold">{recentVol.toFixed(2)}</h3>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Waste Volume (m³)</p>
+                        <h3 className="text-3xl font-bold tracking-tighter text-slate-800">{recentVol.toFixed(2)}</h3>
                     </div>
                 </div>
 
-                {/* Simplified History Table to prevent render heavy lifting */}
+                {/* --- HISTORY TABLE --- */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center font-black text-slate-800 text-sm uppercase">
-                       <ClipboardCheck size={16} className="mr-2 text-[#0089A3]" /> Operational History
+                       <span className="flex items-center"><ClipboardCheck size={16} className="mr-2 text-[#0089A3]" /> Operational History</span>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <tbody className="divide-y divide-slate-100">
                                 {loading ? (
-                                    <tr><td className="p-20 text-center text-slate-400 animate-pulse font-bold uppercase text-xs">Syncing...</td></tr>
+                                    <tr><td className="p-20 text-center text-slate-400 animate-pulse font-bold uppercase text-xs">Syncing Fleet Data...</td></tr>
                                 ) : entries.length > 0 ? entries.map((entry) => (
                                     <tr key={entry._id} className="hover:bg-cyan-50/30 transition-colors text-sm font-bold">
-                                        <td className="p-4 uppercase">{entry.vesselName} <div className="text-[10px] text-slate-400 font-mono tracking-tighter">IMO: {entry.imoNumber}</div></td>
-                                        <td className="p-4 text-slate-600 uppercase text-xs"><Anchor size={12} className="inline mr-1" /> {entry.terminal || 'N/A'}</td>
+                                        <td className="p-4 uppercase text-slate-800">
+                                            {entry.vesselName} 
+                                            <div className="text-[10px] text-slate-400 font-mono tracking-tighter lowercase">imo: {entry.imoNumber}</div>
+                                        </td>
+                                        <td className="p-4 text-slate-600 uppercase text-xs">
+                                            <Anchor size={12} className="inline mr-1 text-slate-300" /> {entry.terminal || 'N/A'}
+                                        </td>
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end space-x-2">
-                                                <button className="p-2 text-slate-300 hover:text-[#0089A3]"><Edit size={16}/></button>
-                                                {entry.fileUrl && <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-300 hover:text-emerald-600"><Download size={16}/></a>}
+                                                <button className="p-2 text-slate-300 hover:text-[#0089A3] transition-colors"><Edit size={16}/></button>
+                                                {entry.fileUrl && (
+                                                    <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-300 hover:text-emerald-600 transition-colors">
+                                                        <Download size={16}/>
+                                                    </a>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
                                 )) : (
-                                    <tr><td className="p-20 text-center text-slate-400 font-bold uppercase text-xs tracking-widest">No entries found.</td></tr>
+                                    <tr><td className="p-20 text-center text-slate-400 font-bold uppercase text-xs tracking-widest">No matching records found.</td></tr>
                                 )}
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                {/* --- FINANCIAL SUMMARY (Uses DollarSign and assessorFee to fix build error) --- */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="px-6 py-5 border-b border-slate-100 bg-[#0089A3] flex justify-between items-center text-white">
+                        <h2 className="font-black text-sm uppercase tracking-widest flex items-center">
+                           <DollarSign size={18} className="mr-2 text-cyan-200" /> Monthly Revenue Summary
+                        </h2>
+                    </div>
+                    <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-50 gap-4">
+                        <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Gross Income Generated</p>
+                            <h4 className="text-2xl font-black text-slate-800 tracking-tighter">${totalRevenue.toLocaleString()}</h4>
+                        </div>
+                        <div className="md:text-right">
+                            <p className="text-[10px] font-black text-[#0089A3] uppercase tracking-widest mb-1">2% Assessor Fee (Due)</p>
+                            <h4 className="text-2xl font-black text-[#0089A3] tracking-tighter">
+                                ${assessorFee.toLocaleString(undefined, {minimumFractionDigits: 2})}
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-center mt-10 text-slate-300 text-[10px] font-black uppercase tracking-[0.4em]">© 2026 Elgan integrated Ltd.</p>
             </main>
         </div>
     );

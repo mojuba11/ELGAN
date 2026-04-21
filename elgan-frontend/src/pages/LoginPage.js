@@ -19,14 +19,17 @@ const LoginPage = ({ setUser }) => {
       const response = await axios.post(`${API_BASE_URL}/api/auth/login`, { username, password });
       const { user, token } = response.data;
       
-      // Critical: Save these keys exactly as named
+      // 1. Save to storage FIRST (prevents immediate logout)
       localStorage.setItem('elgan_token', token);
       localStorage.setItem('elgan_user', JSON.stringify(user));
       localStorage.setItem('elgan_user_name', user.username);
       
-      setUser(user); // App.js will now automatically handle the redirect
+      // 2. Update state SECOND
+      setUser(user);
+      
     } catch (err) {
-      setError(err.response?.data?.msg || "Login failed. Check backend connection.");
+      console.error("Login Error:", err);
+      setError(err.response?.data?.msg || "Login failed. Check your connection.");
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +58,7 @@ const LoginPage = ({ setUser }) => {
             <input type="password" required className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#0089A3] font-black text-slate-700" placeholder="Security Code" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           <button type="submit" disabled={isLoading} className="w-full bg-[#0089A3] text-white font-black py-4 rounded-xl hover:bg-[#006F85] transition-all flex items-center justify-center shadow-xl shadow-cyan-100 disabled:bg-slate-300 active:scale-95 text-lg">
-            {isLoading ? <><Loader2 className="animate-spin mr-2" size={20} /> <span className="text-xs uppercase tracking-widest">Verifying...</span></> : "ACCESS PORTAL"}
+            {isLoading ? <><Loader2 className="animate-spin mr-2" size={20} /> <span className="text-xs uppercase tracking-widest">Securing Portal...</span></> : "ACCESS PORTAL"}
           </button>
         </form>
         <p className="text-center mt-12 text-slate-500 text-[9px] font-black uppercase tracking-[0.2em]">© 2026 Elgan integrated Ltd.</p>

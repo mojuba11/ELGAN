@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Ship, Anchor, FilePlus, ArrowLeft, Loader2 } from 'lucide-react';
+import { Ship, Anchor, FilePlus, ArrowLeft, Loader2, UserCheck } from 'lucide-react';
 
 const EntryForm = () => {
     const navigate = useNavigate();
@@ -14,6 +14,7 @@ const EntryForm = () => {
         mciNumber: '', 
         terminal: '', 
         chartererName: '',
+        agentName: '', // Added Agent Name to state
         wasteType: 'sludge', 
         volume: '', 
         dateOfArrival: '', 
@@ -113,13 +114,14 @@ const EntryForm = () => {
 
                 <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* LEFT COLUMN: VESSEL INFO */}
+                        {/* LEFT COLUMN: VESSEL & AGENT INFO */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
-                                <Ship size={14} className="mr-2 text-[#0089A3]" /> Vessel Identification
+                                <Ship size={14} className="mr-2 text-[#0089A3]" /> Vessel & Agent Identification
                             </label>
                             <input name="vesselName" placeholder="Vessel Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                             <input name="imoNumber" placeholder="IMO Number" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
+                            <input name="agentName" placeholder="Agent Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                         </div>
 
                         {/* RIGHT COLUMN: TERMINAL INFO */}

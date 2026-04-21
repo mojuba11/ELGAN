@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { 
     Plus, Download, Edit, LogOut, User, 
-    Ship, ClipboardCheck, HardDrive, Anchor, DollarSign, Eye, X 
-} from 'lucide-react'; 
+    Ship, ClipboardCheck, HardDrive, DollarSign, Eye, X 
+} from 'lucide-react'; // Removed 'Anchor' to fix build error
 import { useNavigate } from 'react-router-dom';
 
 const FleetDashboard = () => {

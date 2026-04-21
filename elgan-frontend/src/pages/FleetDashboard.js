@@ -9,17 +9,18 @@ import { useNavigate } from 'react-router-dom';
 const FleetDashboard = () => {
     const navigate = useNavigate();
     const [entries, setEntries] = useState([]);
-    const [financials, setFinancials] = useState(null);
+    const [financialList, setFinancialList] = useState([]); // List for financial table
     const [loading, setLoading] = useState(true);
     const [userName, setUserName] = useState('Fleet Operator');
     
+    // Modal States
     const [selectedEntry, setSelectedEntry] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
     const handleLogout = () => {
-        if (window.confirm("Confirm logout?")) {
+        if (window.confirm("Confirm logout from Fleet Operations?")) {
             localStorage.clear(); 
             window.location.href = '/login'; 
         }
@@ -41,12 +42,9 @@ const FleetDashboard = () => {
             const entriesRes = await axios.get(`${API_BASE_URL}/api/entries/all`, config);
             setEntries(Array.isArray(entriesRes.data) ? entriesRes.data : []);
 
-            // 2. Fetch Latest Financial Report (Exact data from FinancialReportForm)
+            // 2. Fetch Financial Reports (Exact data from FinancialReportForm)
             const finRes = await axios.get(`${API_BASE_URL}/api/financials/all`, config);
-            if (Array.isArray(finRes.data) && finRes.data.length > 0) {
-                // Grab the absolute latest submitted report
-                setFinancials(finRes.data[finRes.data.length - 1]);
-            }
+            setFinancialList(Array.isArray(finRes.data) ? finRes.data : []);
 
             setLoading(false);
         } catch (err) {
@@ -72,10 +70,10 @@ const FleetDashboard = () => {
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
             {/* --- NAVIGATION --- */}
-            <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50">
+            <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg" />
-                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter"></span>
+                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">ELGAN</span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="text-right hidden sm:block">
@@ -104,7 +102,7 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- STATS --- */}
+                {/* --- QUICK STATS --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
                         <div className="p-4 bg-cyan-50 text-[#0089A3] rounded-xl"><Ship size={32} /></div>
@@ -122,7 +120,7 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- SEPARATED TABLE --- */}
+                {/* --- OPERATIONS HISTORY TABLE --- */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase">
                        Operational History
@@ -168,36 +166,47 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- FINANCIAL SUMMARY (PULLS DIRECT FROM FINANCIALREPORTFORM) --- */}
-                <div className="bg-slate-900 rounded-3xl shadow-xl overflow-hidden border border-slate-800">
-                    <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center text-white">
-                        <h2 className="font-black text-sm uppercase tracking-[0.2em] flex items-center">
-                           <DollarSign size={20} className="mr-2 text-[#0089A3]" /> Monthly Revenue Summary
-                        </h2>
-                        {financials && (
-                            <span className="text-[10px] font-black bg-white/10 px-4 py-1 rounded-full uppercase tracking-widest text-[#0089A3]">
-                                Report Period: {financials.reportMonth}
-                            </span>
-                        )}
+                {/* --- MONTHLY REVENUE SUMMARY TABLE --- */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                    <div className="px-6 py-4 border-b border-slate-100 bg-[#0089A3] font-black text-white text-sm uppercase flex items-center">
+                       <DollarSign size={18} className="mr-2" /> Financial Audit History
                     </div>
-                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Total Monthly Income (Reported)</p>
-                            <h4 className="text-4xl font-black text-white tracking-tighter">
-                                ${financials ? Number(financials.totalIncome).toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00'}
-                            </h4>
-                        </div>
-                        <div className="md:text-right">
-                            <p className="text-[10px] font-black text-[#0089A3] uppercase tracking-widest mb-2">2% Assessor Fee (Reported)</p>
-                            <h4 className="text-4xl font-black text-[#0089A3] tracking-tighter">
-                                ${financials ? Number(financials.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00'}
-                            </h4>
-                        </div>
+                    <div className="overflow-x-auto w-full">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="text-[10px] uppercase tracking-widest text-slate-500 border-b border-slate-100 bg-slate-50/30">
+                                    <th className="p-4 font-black">Reporting Period</th>
+                                    <th className="p-4 font-black">Total Income (USD)</th>
+                                    <th className="p-4 font-black text-[#0089A3]">2% Assessor Fee</th>
+                                    <th className="p-4 font-black text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 text-xs font-bold uppercase text-slate-700">
+                                {loading ? (
+                                    <tr><td colSpan="4" className="p-10 text-center text-slate-400">Loading Financials...</td></tr>
+                                ) : financialList.length > 0 ? financialList.map((fin) => (
+                                    <tr key={fin._id} className="hover:bg-slate-50 transition-colors">
+                                        <td className="p-4">{fin.reportMonth}</td>
+                                        <td className="p-4">${Number(fin.totalIncome).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                                        <td className="p-4 text-[#0089A3]">${Number(fin.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                                        <td className="p-4 text-right">
+                                            <button className="text-slate-400 hover:text-slate-900 transition-all font-black text-[9px] uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-md">
+                                                View Audit
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )) : (
+                                    <tr><td colSpan="4" className="p-10 text-center text-slate-400">No financial reports found.</td></tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+                
+                <p className="text-center mt-12 text-slate-300 text-[10px] font-black uppercase tracking-[0.5em]">© 2026 Elgan integrated Ltd.</p>
             </main>
 
-            {/* --- MODAL --- */}
+            {/* --- DETAILS MODAL --- */}
             {showModal && selectedEntry && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
                     <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">

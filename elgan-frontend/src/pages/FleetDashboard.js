@@ -14,16 +14,21 @@ const FleetDashboard = () => {
     
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+    // --- SECURE LOGOUT ---
     const handleLogout = () => {
         if (window.confirm("Confirm logout from Fleet Operations?")) {
             localStorage.clear(); 
+            // Force a hard redirect to the login page to reset all states
             window.location.href = '/login'; 
         }
     };
 
     const fetchMyEntries = useCallback(async () => {
         const token = localStorage.getItem('elgan_token');
-        if (!token) return;
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
         try {
             const res = await axios.get(`${API_BASE_URL}/api/entries/all`, {
@@ -34,21 +39,31 @@ const FleetDashboard = () => {
         } catch (err) {
             console.error("Fleet Data Error:", err);
             setLoading(false);
-            // GENTLE ERROR: Only logout if token is actually missing from storage
-            if (err.response?.status === 401 && !localStorage.getItem('elgan_token')) {
-                localStorage.clear();
-                window.location.href = '/login';
+            
+            /**
+             * GENTLE AUTH GUARD:
+             * We only kick the user out if the server explicitly says 401 (Unauthorized)
+             * AND the token is missing from storage. This prevents "Race Condition" 
+             * logouts during tab switches or server wake-up delays.
+             */
+            if (err.response?.status === 401) {
+                const checkToken = localStorage.getItem('elgan_token');
+                if (!checkToken) {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                }
             }
         }
     }, [API_BASE_URL]);
 
     useEffect(() => {
         fetchMyEntries();
+        // Load the persistent username for the UI
         const storedName = localStorage.getItem('elgan_user_name');
         if (storedName) setUserName(storedName);
     }, [fetchMyEntries]);
 
-    // Derived Stats
+    // Derived Stats with safety fallbacks
     const totalSubmissions = entries?.length || 0;
     const recentVol = entries?.reduce((acc, curr) => acc + (Number(curr.volume) || 0), 0) || 0;
     const totalRevenue = entries?.reduce((acc, curr) => acc + (Number(curr.amountMade) || 0), 0) || 0;
@@ -59,7 +74,7 @@ const FleetDashboard = () => {
             {/* --- NAVIGATION --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
-                    <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
+                    <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" />
                     <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">
                         ELGAN <span className="text-slate-400 font-normal lowercase">fleet</span>
                     </span>
@@ -74,7 +89,10 @@ const FleetDashboard = () => {
                             <User size={20} />
                         </div>
                     </div>
-                    <button onClick={handleLogout} className="flex items-center text-slate-400 hover:text-red-600 transition-colors font-bold text-sm">
+                    <button 
+                        onClick={handleLogout} 
+                        className="flex items-center text-slate-400 hover:text-red-600 transition-colors font-bold text-sm"
+                    >
                         <LogOut size={18} className="mr-2" /> Logout
                     </button>
                 </div>
@@ -84,13 +102,21 @@ const FleetDashboard = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Operations Log</h1>
-                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-[#0089A3]/30 text-sm">Offshore Waste Management System.</p>
+                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-[#0089A3]/30 text-sm">
+                            Offshore Waste Management System.
+                        </p>
                     </div>
                     <div className="flex space-x-3 w-full md:w-auto">
-                        <button onClick={() => navigate('/financial-report')} className="flex-1 md:flex-none flex items-center justify-center bg-slate-800 text-white px-5 py-4 rounded-xl hover:bg-black transition-all shadow-lg font-bold text-xs active:scale-95">
+                        <button 
+                            onClick={() => navigate('/financial-report')} 
+                            className="flex-1 md:flex-none flex items-center justify-center bg-slate-800 text-white px-5 py-4 rounded-xl hover:bg-black transition-all shadow-lg font-bold text-xs active:scale-95 touch-manipulation"
+                        >
                             <ClipboardCheck size={18} className="mr-2 text-[#0089A3]" /> Financial Report
                         </button>
-                        <button onClick={() => navigate('/entry')} className="flex-1 md:flex-none flex items-center justify-center bg-[#0089A3] text-white px-5 py-4 rounded-xl hover:bg-[#006F85] transition-all shadow-lg shadow-cyan-100 font-bold text-xs active:scale-95">
+                        <button 
+                            onClick={() => navigate('/entry')} 
+                            className="flex-1 md:flex-none flex items-center justify-center bg-[#0089A3] text-white px-5 py-4 rounded-xl hover:bg-[#006F85] transition-all shadow-lg shadow-cyan-100 font-bold text-xs active:scale-95 touch-manipulation"
+                        >
                             <Plus size={20} className="mr-2" /> New Entry
                         </button>
                     </div>
@@ -153,7 +179,7 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
-                {/* --- FINANCIAL SUMMARY (Uses DollarSign and assessorFee to fix build error) --- */}
+                {/* --- FINANCIAL SUMMARY --- */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="px-6 py-5 border-b border-slate-100 bg-[#0089A3] flex justify-between items-center text-white">
                         <h2 className="font-black text-sm uppercase tracking-widest flex items-center">

@@ -14,7 +14,7 @@ const FleetDashboard = () => {
     const handleLogout = () => {
         if (window.confirm("Confirm logout from Fleet Operations?")) {
             localStorage.clear(); 
-            window.location.href = '/login'; // Use direct href to kill any loops
+            window.location.href = '/login'; 
         }
     };
 
@@ -31,7 +31,8 @@ const FleetDashboard = () => {
         } catch (err) {
             console.error("Fleet Data Error:", err);
             setLoading(false);
-            if (err.response?.status === 401) {
+            // GENTLE ERROR: Don't logout immediately. Only logout if the token is completely missing.
+            if (err.response?.status === 401 && !localStorage.getItem('elgan_token')) {
                 localStorage.clear();
                 window.location.href = '/login';
             }
@@ -53,7 +54,7 @@ const FleetDashboard = () => {
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
-                    <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm border border-slate-100" />
+                    <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
                     <span className="text-xl font-black text-[#0089A3] uppercase">ELGAN <span className="text-slate-400 font-normal lowercase">fleet</span></span>
                 </div>
                 <div className="flex items-center space-x-6">
@@ -74,7 +75,7 @@ const FleetDashboard = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Operations Log</h1>
-                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-[#0089A3]/30 decoration-4">Offshore Waste Management System.</p>
+                        <p className="text-slate-500 font-medium mt-1 italic underline decoration-[#0089A3]/30 text-sm">Offshore Waste Management System.</p>
                     </div>
                     <div className="flex space-x-3 w-full md:w-auto">
                         <button onClick={() => navigate('/financial-report')} className="flex-1 md:flex-none flex items-center justify-center bg-slate-800 text-white px-5 py-4 rounded-xl hover:bg-black transition-all shadow-lg font-bold text-xs active:scale-95">
@@ -94,7 +95,7 @@ const FleetDashboard = () => {
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                         <div className="p-3 bg-orange-50 text-orange-600 rounded-xl w-fit mb-4"><Clock size={24} /></div>
-                        <p className="text-slate-400 text-[10px] font-black uppercase">Pending Verification</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase">Verification</p>
                         <h3 className="text-3xl font-bold">0</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
@@ -104,27 +105,19 @@ const FleetDashboard = () => {
                     </div>
                 </div>
 
+                {/* Simplified History Table to prevent render heavy lifting */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-                    <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                        <h2 className="font-black text-slate-800 text-sm uppercase tracking-tighter flex items-center">
-                           <ClipboardCheck size={16} className="mr-2 text-[#0089A3]" /> Operational History
-                        </h2>
+                    <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center font-black text-slate-800 text-sm uppercase">
+                       <ClipboardCheck size={16} className="mr-2 text-[#0089A3]" /> Operational History
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-white border-b border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                    <th className="p-4">Asset & IMO</th>
-                                    <th className="p-4">Terminal</th>
-                                    <th className="p-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {loading ? (
-                                    <tr><td colSpan="3" className="p-20 text-center text-slate-400 animate-pulse font-bold uppercase text-xs">Syncing...</td></tr>
+                                    <tr><td className="p-20 text-center text-slate-400 animate-pulse font-bold uppercase text-xs">Syncing...</td></tr>
                                 ) : entries.length > 0 ? entries.map((entry) => (
-                                    <tr key={entry._id} className="hover:bg-cyan-50/30 transition-colors group text-sm font-bold">
-                                        <td className="p-4 uppercase">{entry.vesselName} <div className="text-[9px] text-slate-400 font-mono">IMO: {entry.imoNumber}</div></td>
+                                    <tr key={entry._id} className="hover:bg-cyan-50/30 transition-colors text-sm font-bold">
+                                        <td className="p-4 uppercase">{entry.vesselName} <div className="text-[10px] text-slate-400 font-mono tracking-tighter">IMO: {entry.imoNumber}</div></td>
                                         <td className="p-4 text-slate-600 uppercase text-xs"><Anchor size={12} className="inline mr-1" /> {entry.terminal || 'N/A'}</td>
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end space-x-2">
@@ -134,28 +127,10 @@ const FleetDashboard = () => {
                                         </td>
                                     </tr>
                                 )) : (
-                                    <tr><td colSpan="3" className="p-20 text-center text-slate-400 font-bold uppercase text-xs tracking-widest">No entries found.</td></tr>
+                                    <tr><td className="p-20 text-center text-slate-400 font-bold uppercase text-xs tracking-widest">No entries found.</td></tr>
                                 )}
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="px-6 py-5 border-b border-slate-100 bg-[#0089A3] flex justify-between items-center text-white">
-                        <h2 className="font-black text-sm uppercase tracking-widest flex items-center">
-                           <DollarSign size={18} className="mr-2 text-cyan-200" /> Monthly Financial Summary
-                        </h2>
-                    </div>
-                    <div className="p-5 flex justify-between items-center bg-slate-50">
-                        <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase">Gross Revenue</p>
-                            <h4 className="text-xl font-bold text-slate-800">${totalRevenue.toLocaleString()}</h4>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-[10px] font-black text-[#0089A3] uppercase">2% Assessor Fee</p>
-                            <h4 className="text-xl font-bold text-[#0089A3]">${assessorFee.toLocaleString(undefined, {minimumFractionDigits: 2})}</h4>
-                        </div>
                     </div>
                 </div>
             </main>

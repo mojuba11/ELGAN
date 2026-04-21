@@ -5,7 +5,7 @@ import {
     Search, FileText, FilterX, LogOut, 
     Download, Eye, LayoutDashboard,
     ClipboardList, X
-} from 'lucide-react'; // Removed CheckCircle2, DollarSign, Ship, and TrendingUp
+} from 'lucide-react';
 
 const ManagerDashboard = () => {
     const navigate = useNavigate();
@@ -58,9 +58,13 @@ const ManagerDashboard = () => {
         setShowModal(true);
     };
 
+    // CALCULATIONS
     const totalRevenue = entries.reduce((acc, curr) => acc + (Number(curr.amountMade) || 0), 0);
     const totalVolume = entries.reduce((acc, curr) => acc + (Number(curr.volume) || 0), 0);
     const assessorFeeTotal = totalRevenue * 0.02;
+
+    // LIMIT TO TOP 5 ENTRIES FOR THE TABLE PREVIEW
+    const displayedEntries = entries.slice(0, 5);
 
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
@@ -68,7 +72,7 @@ const ManagerDashboard = () => {
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
-                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase"></span>
+                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase">ELGAN HQ</span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="hidden sm:flex flex-col text-right border-r pr-6 border-slate-200">
@@ -150,10 +154,11 @@ const ManagerDashboard = () => {
                     </button>
                 </div>
 
-                {/* --- SEPARATED OPERATIONAL LOG TABLE --- */}
+                {/* --- SEPARATED OPERATIONAL LOG TABLE (TOP 5) --- */}
                 <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
-                    <div className="px-8 py-5 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase">
-                       Fleet Operational History
+                    <div className="px-8 py-5 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase flex justify-between items-center">
+                       <span>Recent Fleet Operational History</span>
+                       <span className="text-[10px] bg-cyan-100 text-[#0089A3] px-3 py-1 rounded-full">Displaying Latest 5</span>
                     </div>
                     <div className="overflow-x-auto w-full">
                         <table className="w-full text-left border-collapse min-w-[1500px]">
@@ -170,7 +175,7 @@ const ManagerDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {entries.map((entry) => (
+                                {displayedEntries.length > 0 ? displayedEntries.map((entry) => (
                                     <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors group text-xs font-bold uppercase text-slate-700">
                                         <td className="p-5 text-[#0089A3] font-black border-r border-slate-50">{entry.vesselName}</td>
                                         <td className="p-5 font-mono border-r border-slate-50">{entry.imoNumber}</td>
@@ -190,7 +195,9 @@ const ManagerDashboard = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
+                                )) : (
+                                    <tr><td colSpan="8" className="p-10 text-center text-slate-400 uppercase text-xs font-bold">No entries found.</td></tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -242,7 +249,7 @@ const ManagerDashboard = () => {
                         <div className="bg-[#0089A3] p-8 flex justify-between items-center text-white">
                             <div>
                                 <h2 className="text-2xl font-black uppercase tracking-tighter leading-none">Management Audit</h2>
-                                <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest mt-2">Vessel Manifest Archive</p>
+                                <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest mt-2">Full Vessel Manifest Archive</p>
                             </div>
                             <button onClick={() => setShowModal(false)} className="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all"><X size={24} /></button>
                         </div>

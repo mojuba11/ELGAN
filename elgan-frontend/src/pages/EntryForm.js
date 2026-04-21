@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Ship, Anchor, FilePlus, ArrowLeft, Loader2, UserCheck } from 'lucide-react';
+import { Ship, Anchor, FilePlus, ArrowLeft, Loader2 } from 'lucide-react'; // Removed UserCheck
 
 const EntryForm = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const EntryForm = () => {
         mciNumber: '', 
         terminal: '', 
         chartererName: '',
-        agentName: '', // Added Agent Name to state
+        agentName: '', 
         wasteType: 'sludge', 
         volume: '', 
         dateOfArrival: '', 
@@ -29,7 +29,6 @@ const EntryForm = () => {
     useEffect(() => {
         const token = localStorage.getItem('elgan_token');
         if (!token) {
-            console.warn("Unauthorized access attempt. Redirecting...");
             navigate('/login');
         }
     }, [navigate]);
@@ -44,7 +43,6 @@ const EntryForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // 1. Get and AGGRESSIVELY clean token (removes all hidden quotes/spaces)
         let token = localStorage.getItem('elgan_token');
         if (token) {
             token = token.replace(/['"]+/g, '').trim(); 
@@ -61,7 +59,6 @@ const EntryForm = () => {
 
         const data = new FormData();
         Object.keys(formData).forEach(key => {
-            // Append data that isn't null
             if (formData[key] !== null) data.append(key, formData[key]);
         });
         
@@ -83,11 +80,11 @@ const EntryForm = () => {
             console.error("Submission Error Status:", err.response?.status);
             
             if (err.response?.status === 401) {
-                alert("Authentication failed. Please log in again to refresh your session.");
+                alert("Authentication failed. Please log in again.");
                 localStorage.clear();
                 window.location.href = '/login';
             } else {
-                alert(err.response?.data?.msg || "Submission Error. Please check all required fields.");
+                alert(err.response?.data?.msg || "Submission Error. Please check all fields.");
             }
         } finally {
             setIsLoading(false);
@@ -98,11 +95,10 @@ const EntryForm = () => {
         <div className="bg-slate-50 min-h-screen p-4 md:p-8 font-sans">
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
                 
-                {/* BRANDED TOP BAR */}
                 <div className="bg-[#0089A3] p-6 flex justify-between items-center text-white">
                     <div className="flex items-center space-x-3">
                         <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto bg-white rounded-lg p-1" />
-                        <h2 className="text-xl font-black uppercase tracking-tighter text-white">New Asset Entry</h2>
+                        <h2 className="text-xl font-black uppercase tracking-tighter">New Asset Entry</h2>
                     </div>
                     <button 
                         onClick={() => navigate('/fleet')} 
@@ -114,7 +110,6 @@ const EntryForm = () => {
 
                 <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* LEFT COLUMN: VESSEL & AGENT INFO */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
                                 <Ship size={14} className="mr-2 text-[#0089A3]" /> Vessel & Agent Identification
@@ -124,7 +119,6 @@ const EntryForm = () => {
                             <input name="agentName" placeholder="Agent Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                         </div>
 
-                        {/* RIGHT COLUMN: TERMINAL INFO */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
                                 <Anchor size={14} className="mr-2 text-[#0089A3]" /> Deployment Details
@@ -143,7 +137,6 @@ const EntryForm = () => {
                         </div>
                     </div>
 
-                    {/* METRICS PANEL */}
                     <div className="bg-cyan-50/50 p-6 rounded-3xl border border-cyan-100 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="text-[10px] font-black text-[#0089A3] uppercase block mb-2 ml-1">Waste Category</label>
@@ -160,7 +153,6 @@ const EntryForm = () => {
                         </div>
                     </div>
 
-                    {/* FILE UPLOAD PANEL */}
                     <div className="group relative border-2 border-dashed border-slate-200 p-8 rounded-3xl text-center hover:border-[#0089A3] transition-all bg-slate-50">
                         <input type="file" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                         <FilePlus className="text-slate-300 mx-auto mb-2" size={40} />

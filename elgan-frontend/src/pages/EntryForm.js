@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Ship, Anchor, FilePlus, ArrowLeft, Loader2, CheckCircle, DollarSign } from 'lucide-react';
@@ -16,7 +16,7 @@ const EntryForm = () => {
         chartererName: '',
         wasteType: 'sludge',
         volume: '',
-        amountMade: '', // Added to sync with Dashboard calculations
+        amountMade: '', 
         dateOfArrival: '',
         dateOfInspection: '',
         nimasaInspector: false,
@@ -24,6 +24,15 @@ const EntryForm = () => {
     });
 
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+    // Verify token exists on component mount
+    useEffect(() => {
+        const token = localStorage.getItem('elgan_token');
+        if (!token) {
+            alert("No active session found. Redirecting to login...");
+            navigate('/login');
+        }
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -39,6 +48,7 @@ const EntryForm = () => {
         e.preventDefault();
         setIsLoading(true);
         
+        // Use the exact key set in LoginPage.js
         const token = localStorage.getItem('elgan_token');
 
         if (!token) {
@@ -53,6 +63,7 @@ const EntryForm = () => {
         });
         
         if (file) {
+            // Ensure this matches the 'key' your backend expects for the file upload
             data.append('manifestScan', file);
         }
 
@@ -69,11 +80,11 @@ const EntryForm = () => {
         } catch (err) {
             console.error("Submission error details:", err.response?.data);
             if (err.response?.status === 401) {
-                alert("Authorization Denied. Redirecting to login...");
+                alert("Your session has timed out. Please log in again.");
                 localStorage.clear();
-                navigate('/login');
+                window.location.href = '/login';
             } else {
-                alert(err.response?.data?.msg || "Submission Failed. Check required fields.");
+                alert(err.response?.data?.msg || "Submission Failed. Please check all fields.");
             }
         } finally {
             setIsLoading(false);
@@ -81,7 +92,7 @@ const EntryForm = () => {
     };
 
     return (
-        <div className="bg-slate-50 min-h-screen p-4 md:p-8 font-sans">
+        <div className="bg-slate-50 min-h-screen p-4 md:p-8 font-sans selection:bg-[#0089A3] selection:text-white">
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
                 
                 {/* --- BRANDED HEADER --- */}
@@ -89,7 +100,7 @@ const EntryForm = () => {
                     <div className="flex items-center space-x-3">
                         <img src="/elgan.jpeg" alt="Logo" className="h-10 w-auto bg-white rounded-lg p-1" />
                         <div>
-                            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter leading-none text-white">New Asset Log</h2>
+                            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter leading-none">New Asset Log</h2>
                             <p className="text-[10px] font-bold text-cyan-100 uppercase tracking-widest mt-1">Operational Manifest Entry</p>
                         </div>
                     </div>
@@ -109,20 +120,20 @@ const EntryForm = () => {
                             <h3 className="text-[#0089A3] font-black text-[10px] uppercase tracking-[0.2em] border-b border-cyan-50 pb-2 flex items-center">
                                 <Ship size={14} className="mr-2" /> Vessel Identification
                             </h3>
-                            <input name="vesselName" placeholder="Vessel Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700 placeholder:font-normal" />
+                            <input name="vesselName" placeholder="Vessel Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                             <div className="grid grid-cols-2 gap-4">
-                                <input name="vesselType" placeholder="Vessel Type" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700 placeholder:font-normal" />
-                                <input name="imoNumber" placeholder="IMO Number" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700 placeholder:font-normal" />
+                                <input name="vesselType" placeholder="Vessel Type" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
+                                <input name="imoNumber" placeholder="IMO Number" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                             </div>
-                            <input name="mciNumber" placeholder="MCI Number" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700 placeholder:font-normal" />
+                            <input name="mciNumber" placeholder="MCI Number" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                         </div>
 
                         <div className="space-y-4">
                             <h3 className="text-[#0089A3] font-black text-[10px] uppercase tracking-[0.2em] border-b border-cyan-50 pb-2 flex items-center">
                                 <Anchor size={14} className="mr-2" /> Logistics & Compliance
                             </h3>
-                            <input name="terminal" placeholder="Terminal / Berth" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700 placeholder:font-normal" />
-                            <input name="chartererName" placeholder="Charterer Name" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700 placeholder:font-normal" />
+                            <input name="terminal" placeholder="Terminal / Berth" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
+                            <input name="chartererName" placeholder="Charterer Name" onChange={handleChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                             
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -168,10 +179,10 @@ const EntryForm = () => {
                         {/* Inspector Checkboxes */}
                         <div className="flex flex-wrap items-center gap-6 mt-8 pt-6 border-t border-cyan-100">
                              <label className="flex items-center text-xs font-black text-slate-600 cursor-pointer uppercase tracking-widest">
-                                <input type="checkbox" name="nimasaInspector" onChange={handleChange} className="mr-3 w-5 h-5 text-[#0089A3] rounded-lg border-cyan-200 focus:ring-[#0089A3]" /> NIMASA Verified
+                                <input type="checkbox" name="nimasaInspector" onChange={handleChange} checked={formData.nimasaInspector} className="mr-3 w-5 h-5 text-[#0089A3] rounded-lg border-cyan-200 focus:ring-[#0089A3]" /> NIMASA Verified
                             </label>
                             <label className="flex items-center text-xs font-black text-slate-600 cursor-pointer uppercase tracking-widest">
-                                <input type="checkbox" name="xpoInspector" onChange={handleChange} className="mr-3 w-5 h-5 text-[#0089A3] rounded-lg border-cyan-200 focus:ring-[#0089A3]" /> XPO Verified
+                                <input type="checkbox" name="xpoInspector" onChange={handleChange} checked={formData.xpoInspector} className="mr-3 w-5 h-5 text-[#0089A3] rounded-lg border-cyan-200 focus:ring-[#0089A3]" /> XPO Verified
                             </label>
                         </div>
                     </div>
@@ -181,29 +192,22 @@ const EntryForm = () => {
                         <input type="file" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
                         <div className="flex flex-col items-center">
                             <FilePlus className="text-slate-300 group-hover:text-[#0089A3] transition-colors mb-2" size={40} />
-                            <p className="text-xs font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-700">Attach Digital Manifest (PDF/JPG)</p>
-                            {file && <p className="mt-4 text-sm font-black text-[#0089A3] bg-cyan-50 px-4 py-1 rounded-full uppercase border border-cyan-100">Selected: {file.name}</p>}
+                            <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Attach Digital Manifest (PDF/JPG)</p>
+                            {file && <p className="mt-4 text-sm font-black text-[#0089A3] bg-cyan-50 px-4 py-1 rounded-full border border-cyan-100">Selected: {file.name}</p>}
                         </div>
                     </div>
 
-                    {/* Submit Button */}
                     <button 
                         type="submit" 
                         disabled={isLoading} 
                         className="w-full bg-[#0089A3] text-white p-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-[#006F85] transition-all flex items-center justify-center shadow-lg shadow-cyan-100 disabled:bg-slate-300 active:scale-95 text-lg"
                     >
-                        {isLoading ? (
-                            <Loader2 className="animate-spin" size={24} />
-                        ) : (
-                            <>Submit</>
-                        )}
+                        {isLoading ? <Loader2 className="animate-spin" size={24} /> : "Authorize & Save Entry"}
                     </button>
                 </form>
             </div>
             
-            <p className="text-center mt-10 text-slate-400 text-[10px] font-black uppercase tracking-[0.4em]">
-                © 2026 Elgan integrated Ltd.
-            </p>
+            <p className="text-center mt-10 text-slate-400 text-[10px] font-black uppercase tracking-[0.4em]">© 2026 Elgan integrated Ltd.</p>
         </div>
     );
 };

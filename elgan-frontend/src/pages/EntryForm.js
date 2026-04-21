@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Ship, Anchor, FilePlus, ArrowLeft, Loader2 } from 'lucide-react'; // Removed UserCheck
+import { Ship, Anchor, FilePlus, ArrowLeft, Loader2 } from 'lucide-react'; 
 
 const EntryForm = () => {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ const EntryForm = () => {
         vesselName: '', 
         vesselType: '', 
         imoNumber: '', 
-        mciNumber: '', 
+        mciNumber: '', // Initialized in state
         terminal: '', 
         chartererName: '',
         agentName: '', 
@@ -110,15 +110,18 @@ const EntryForm = () => {
 
                 <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* LEFT COLUMN: VESSEL, IMO, MCI & AGENT INFO */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
                                 <Ship size={14} className="mr-2 text-[#0089A3]" /> Vessel & Agent Identification
                             </label>
                             <input name="vesselName" placeholder="Vessel Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                             <input name="imoNumber" placeholder="IMO Number" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
+                            <input name="mciNumber" placeholder="MCI Number" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                             <input name="agentName" placeholder="Agent Name" onChange={handleChange} required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0089A3] font-bold text-slate-700" />
                         </div>
 
+                        {/* RIGHT COLUMN: TERMINAL & DATES */}
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
                                 <Anchor size={14} className="mr-2 text-[#0089A3]" /> Deployment Details
@@ -137,6 +140,7 @@ const EntryForm = () => {
                         </div>
                     </div>
 
+                    {/* METRICS PANEL */}
                     <div className="bg-cyan-50/50 p-6 rounded-3xl border border-cyan-100 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="text-[10px] font-black text-[#0089A3] uppercase block mb-2 ml-1">Waste Category</label>
@@ -153,6 +157,7 @@ const EntryForm = () => {
                         </div>
                     </div>
 
+                    {/* FILE UPLOAD PANEL */}
                     <div className="group relative border-2 border-dashed border-slate-200 p-8 rounded-3xl text-center hover:border-[#0089A3] transition-all bg-slate-50">
                         <input type="file" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                         <FilePlus className="text-slate-300 mx-auto mb-2" size={40} />

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const FleetDashboard = () => {
     const navigate = useNavigate();
     const [entries, setEntries] = useState([]);
-    const [financialList, setFinancialList] = useState([]); // List for financial table
+    const [financialList, setFinancialList] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [userName, setUserName] = useState('Fleet Operator');
     
@@ -42,7 +42,7 @@ const FleetDashboard = () => {
             const entriesRes = await axios.get(`${API_BASE_URL}/api/entries/all`, config);
             setEntries(Array.isArray(entriesRes.data) ? entriesRes.data : []);
 
-            // 2. Fetch Financial Reports (Exact data from FinancialReportForm)
+            // 2. Fetch Financial Reports
             const finRes = await axios.get(`${API_BASE_URL}/api/financials/all`, config);
             setFinancialList(Array.isArray(finRes.data) ? finRes.data : []);
 
@@ -73,7 +73,7 @@ const FleetDashboard = () => {
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg" />
-                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter"></span>
+                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">ELGAN</span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="text-right hidden sm:block">
@@ -146,15 +146,16 @@ const FleetDashboard = () => {
                                     <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors text-xs font-bold uppercase text-slate-700">
                                         <td className="p-4 text-[#0089A3] font-black border-r border-slate-50">{entry.vesselName}</td>
                                         <td className="p-4 font-mono border-r border-slate-50">{entry.imoNumber}</td>
-                                        <td className="p-4 border-r border-slate-50">{entry.dateOfArrival || entry.arrivalDate || 'N/A'}</td>
-                                        <td className="p-4 border-r border-slate-50">{entry.mciNumber || entry.mciNo || 'N/A'}</td>
+                                        <td className="p-4 border-r border-slate-50">{entry.dateOfArrival || 'N/A'}</td>
+                                        <td className="p-4 border-r border-slate-50">{entry.mciNumber || 'N/A'}</td>
                                         <td className="p-4 text-orange-600 border-r border-slate-50">{entry.dateOfInspection || 'Pending'}</td>
                                         <td className="p-4 border-r border-slate-50">{entry.terminal || 'N/A'}</td>
-                                        <td className="p-4 border-r border-slate-50">{entry.agentName || 'Not Assigned'}</td>
+                                        <td className="p-4 border-r border-slate-50">{entry.agentName || 'N/A'}</td>
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end space-x-2">
                                                 <button onClick={() => handleViewDetails(entry)} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-[#0089A3] hover:text-white transition-all"><Eye size={16}/></button>
-                                                <button className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all"><Edit size={16}/></button>
+                                                {/* FIXED EDIT BUTTON */}
+                                                <button onClick={() => navigate(`/edit-entry/${entry._id}`)} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all"><Edit size={16}/></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -175,9 +176,9 @@ const FleetDashboard = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="text-[10px] uppercase tracking-widest text-slate-500 border-b border-slate-100 bg-slate-50/30">
-                                    <th className="p-4 font-black">Reporting Period</th>
-                                    <th className="p-4 font-black">Total Income (USD)</th>
-                                    <th className="p-4 font-black text-[#0089A3]">2% Assessor Fee</th>
+                                    <th className="p-4 font-black border-r border-slate-100">Reporting Period</th>
+                                    <th className="p-4 font-black border-r border-slate-100">Total Income (USD)</th>
+                                    <th className="p-4 font-black text-[#0089A3] border-r border-slate-100">2% Assessor Fee</th>
                                     <th className="p-4 font-black text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -186,13 +187,19 @@ const FleetDashboard = () => {
                                     <tr><td colSpan="4" className="p-10 text-center text-slate-400">Loading Financials...</td></tr>
                                 ) : financialList.length > 0 ? financialList.map((fin) => (
                                     <tr key={fin._id} className="hover:bg-slate-50 transition-colors">
-                                        <td className="p-4">{fin.reportMonth}</td>
-                                        <td className="p-4">${Number(fin.totalIncome).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
-                                        <td className="p-4 text-[#0089A3]">${Number(fin.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                                        <td className="p-4 border-r border-slate-50">{fin.reportMonth}</td>
+                                        <td className="p-4 border-r border-slate-50">${Number(fin.totalIncome).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                                        <td className="p-4 text-[#0089A3] border-r border-slate-50">${Number(fin.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                                         <td className="p-4 text-right">
-                                            <button className="text-slate-400 hover:text-slate-900 transition-all font-black text-[9px] uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-md">
-                                                View Audit
-                                            </button>
+                                            <div className="flex justify-end space-x-2">
+                                                {/* ADDED EDIT BUTTON FOR FINANCIALS */}
+                                                <button onClick={() => navigate(`/edit-financial/${fin._id}`)} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
+                                                    <Edit size={14}/>
+                                                </button>
+                                                <button className="text-slate-400 hover:text-slate-900 transition-all font-black text-[9px] uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-md">
+                                                    View Audit
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 )) : (
@@ -215,12 +222,12 @@ const FleetDashboard = () => {
                             <button onClick={() => setShowModal(false)} className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all"><X size={24} /></button>
                         </div>
                         <div className="p-10 grid grid-cols-2 gap-y-8 gap-x-12 text-sm uppercase border-b border-slate-50">
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Vessel Name</p><p className="font-black text-slate-800 text-lg">{selectedEntry.vesselName}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">IMO Number</p><p className="font-bold text-slate-800">{selectedEntry.imoNumber}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Agent Name</p><p className="font-bold text-slate-800">{selectedEntry.agentName || 'N/A'}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">MCI Number</p><p className="font-bold text-slate-800">{selectedEntry.mciNumber || 'N/A'}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Arrival Date</p><p className="font-bold text-slate-800">{selectedEntry.dateOfArrival || 'N/A'}</p></div>
-                            <div><p className="text-[10px] text-slate-400 font-black mb-1 tracking-widest">Inspection Date</p><p className="font-bold text-orange-600">{selectedEntry.dateOfInspection || 'Pending'}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Vessel Name</p><p className="font-black text-slate-800 text-lg">{selectedEntry.vesselName}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1">IMO Number</p><p className="font-bold text-slate-800">{selectedEntry.imoNumber}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Agent Name</p><p className="font-bold text-slate-800">{selectedEntry.agentName || 'N/A'}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1">MCI Number</p><p className="font-bold text-slate-800">{selectedEntry.mciNumber || 'N/A'}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Arrival Date</p><p className="font-bold text-slate-800">{selectedEntry.dateOfArrival || 'N/A'}</p></div>
+                            <div><p className="text-[10px] text-slate-400 font-black mb-1">Inspection Date</p><p className="font-bold text-orange-600">{selectedEntry.dateOfInspection || 'Pending'}</p></div>
                         </div>
                         <div className="px-10 py-6 bg-slate-50 flex justify-between items-center">
                             <div className="flex flex-col">

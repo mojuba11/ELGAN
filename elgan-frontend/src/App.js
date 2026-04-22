@@ -5,11 +5,15 @@ import FleetDashboard from './pages/FleetDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
 import EntryForm from './pages/EntryForm'; 
 import FinancialReportForm from './pages/FinancialReportForm';
+
+// --- NEW IMPORTS FOR EDITING ---
+import EditEntryForm from './pages/EditEntryForm';
+import EditFinancialForm from './pages/EditFinancialForm';
+
 import './App.css'; 
 
 function App() {
   // --- 1. INSTANT SESSION RECOVERY ---
-  // We check LocalStorage IMMEDIATELY so the state isn't null on tab switch
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('elgan_user');
     if (!savedUser) return null;
@@ -24,12 +28,10 @@ function App() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Small delay to ensure the DOM and Storage are synced
     setIsReady(true);
   }, []);
 
   // --- 2. SELECTIVE CLEANUP ---
-  // Only wipe storage if the user is EXPLICITLY null (meaning they clicked Logout)
   useEffect(() => {
     if (isReady && user === null) {
       localStorage.removeItem('elgan_user');
@@ -38,7 +40,7 @@ function App() {
     }
   }, [user, isReady]);
 
-  if (!isReady) return null; // Prevent flicker on load
+  if (!isReady) return null; 
 
   return (
     <Router>
@@ -58,9 +60,22 @@ function App() {
             path="/entry" 
             element={user?.role === 'fleet' ? <EntryForm /> : <Navigate to="/login" replace />} 
           />
+          
+          {/* NEW: Edit Entry Route */}
+          <Route 
+            path="/edit-entry/:id" 
+            element={user?.role === 'fleet' ? <EditEntryForm /> : <Navigate to="/login" replace />} 
+          />
+
           <Route 
             path="/financial-report" 
             element={user?.role === 'fleet' ? <FinancialReportForm /> : <Navigate to="/login" replace />} 
+          />
+
+          {/* NEW: Edit Financial Route */}
+          <Route 
+            path="/edit-financial/:id" 
+            element={user?.role === 'fleet' ? <EditFinancialForm /> : <Navigate to="/login" replace />} 
           />
 
           {/* Role-Protected Manager Routes */}

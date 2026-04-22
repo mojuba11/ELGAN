@@ -72,13 +72,13 @@ const FleetDashboard = () => {
             {/* --- NAVIGATION --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/fleet')}>
-                    <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
-                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter">ELGAN</span>
+                    <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg" />
+                    <span className="text-xl font-black text-[#0089A3] uppercase tracking-tighter"></span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="text-right hidden sm:block">
                         <p className="text-sm font-bold text-slate-800">{userName}</p>
-                        <p className="text-[10px] font-bold text-[#0089A3] uppercase tracking-widest">Operator Access</p>
+                        <p className="text-[10px] font-bold text-[#0089A3] uppercase tracking-widest">Operator</p>
                     </div>
                     <button onClick={handleLogout} className="text-slate-400 hover:text-red-600 transition-colors">
                         <LogOut size={20} />
@@ -107,14 +107,14 @@ const FleetDashboard = () => {
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
                         <div className="p-4 bg-cyan-50 text-[#0089A3] rounded-xl"><Ship size={32} /></div>
                         <div>
-                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Vessels Inspected</p>
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Vessel Inspected</p>
                             <h3 className="text-3xl font-bold text-slate-800">{totalSubmissions}</h3>
                         </div>
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
                         <div className="p-4 bg-emerald-50 text-emerald-600 rounded-xl"><HardDrive size={32} /></div>
                         <div>
-                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Volume Handled</p>
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Volume</p>
                             <h3 className="text-3xl font-bold text-slate-800">{totalVolume.toFixed(2)} m³</h3>
                         </div>
                     </div>
@@ -123,7 +123,7 @@ const FleetDashboard = () => {
                 {/* --- OPERATIONS HISTORY TABLE --- */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase">
-                       Fleet Operational History
+                       Operational History
                     </div>
                     <div className="overflow-x-auto w-full">
                         <table className="w-full text-left border-collapse min-w-[1500px]">
@@ -141,7 +141,7 @@ const FleetDashboard = () => {
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {loading ? (
-                                    <tr><td colSpan="8" className="p-20 text-center text-slate-400 animate-pulse font-bold uppercase text-xs">Syncing fleet data...</td></tr>
+                                    <tr><td colSpan="8" className="p-20 text-center text-slate-400 animate-pulse font-bold uppercase text-xs">Syncing...</td></tr>
                                 ) : entries.length > 0 ? entries.map((entry) => (
                                     <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors text-xs font-bold uppercase text-slate-700">
                                         <td className="p-4 text-[#0089A3] font-black border-r border-slate-50">{entry.vesselName}</td>
@@ -154,6 +154,7 @@ const FleetDashboard = () => {
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end space-x-2">
                                                 <button onClick={() => handleViewDetails(entry)} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-[#0089A3] hover:text-white transition-all"><Eye size={16}/></button>
+                                                {/* FIXED EDIT BUTTON */}
                                                 <button onClick={() => navigate(`/edit-entry/${entry._id}`)} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all"><Edit size={16}/></button>
                                             </div>
                                         </td>
@@ -177,7 +178,7 @@ const FleetDashboard = () => {
                                 <tr className="text-[10px] uppercase tracking-widest text-slate-500 border-b border-slate-100 bg-slate-50/30">
                                     <th className="p-4 font-black border-r border-slate-100">Reporting Period</th>
                                     <th className="p-4 font-black border-r border-slate-100">Total Income (USD)</th>
-                                    <th className="p-4 font-black text-white/90 border-r border-slate-100">2% Assessor Fee</th>
+                                    <th className="p-4 font-black text-[#0089A3] border-r border-slate-100">2% Assessor Fee</th>
                                     <th className="p-4 font-black text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -191,6 +192,7 @@ const FleetDashboard = () => {
                                         <td className="p-4 text-[#0089A3] border-r border-slate-50">${Number(fin.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end space-x-2">
+                                                {/* ADDED EDIT BUTTON FOR FINANCIALS */}
                                                 <button onClick={() => navigate(`/edit-financial/${fin._id}`)} className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
                                                     <Edit size={14}/>
                                                 </button>
@@ -201,7 +203,7 @@ const FleetDashboard = () => {
                                         </td>
                                     </tr>
                                 )) : (
-                                    <tr><td colSpan="4" className="p-10 text-center text-slate-400 uppercase text-xs font-bold">No financial reports found.</td></tr>
+                                    <tr><td colSpan="4" className="p-10 text-center text-slate-400">No financial reports found.</td></tr>
                                 )}
                             </tbody>
                         </table>
@@ -234,11 +236,11 @@ const FleetDashboard = () => {
                             </div>
                             <div className="flex space-x-3">
                                 {selectedEntry.fileUrl && (
-                                    <a href={`${API_BASE_URL}/uploads/${selectedEntry.fileUrl}`} target="_blank" rel="noreferrer" className="flex items-center bg-[#0089A3] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#006F85] transition-all">
+                                    <a href={`${API_BASE_URL}/uploads/${selectedEntry.fileUrl}`} target="_blank" rel="noreferrer" className="flex items-center bg-[#0089A3] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">
                                         <Download size={14} className="mr-2" /> Manifest
                                     </a>
                                 )}
-                                <button onClick={() => setShowModal(false)} className="bg-slate-200 text-slate-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-300 transition-all">Close</button>
+                                <button onClick={() => setShowModal(false)} className="bg-slate-200 text-slate-600 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">Close</button>
                             </div>
                         </div>
                     </div>

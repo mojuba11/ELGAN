@@ -160,7 +160,7 @@ const ManagerDashboard = () => {
                             <option value="sludge">Oily Sludge</option>
                             <option value="plastic">Plastic</option>
                             <option value="garbage">Garbage</option>
-                            <option value="hazardous">Hazardous</option>
+                            <option value="N/A">N/A</option>
                         </select>
                     </div>
                     <div className="grid grid-cols-2 gap-2 md:col-span-2">

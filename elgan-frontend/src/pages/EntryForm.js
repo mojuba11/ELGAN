@@ -148,7 +148,7 @@ const EntryForm = () => {
                                 <option value="sludge">Oily Sludge</option>
                                 <option value="plastic">Plastic</option>
                                 <option value="garbage">Garbage</option>
-                                <option value="hazardous">N/A</option>
+                                <option value="n/a">N/A</option>
                             </select>
                         </div>
                         <div>

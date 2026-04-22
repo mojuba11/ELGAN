@@ -17,6 +17,7 @@ const ManagerDashboard = () => {
     const [endDate, setEndDate] = useState('');
     const [userName, setUserName] = useState('Operational Manager');
 
+    // Modal State
     const [selectedEntry, setSelectedEntry] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
@@ -77,18 +78,22 @@ const ManagerDashboard = () => {
         setShowModal(true);
     };
 
-    const totalRevenue = entries.reduce((acc, curr) => acc + (Number(curr.amountMade) || 0), 0);
+    // --- UPDATED CALCULATIONS: SUMMING FROM FINANCIAL REPORTS ---
+    const totalRevenue = financials.reduce((acc, curr) => acc + (Number(curr.totalIncome) || 0), 0);
+    const assessorFeeTotal = financials.reduce((acc, curr) => acc + (Number(curr.assessorFee) || 0), 0);
+    
+    // Volume still comes from individual log entries
     const totalVolume = entries.reduce((acc, curr) => acc + (Number(curr.volume) || 0), 0);
-    const assessorFeeTotal = totalRevenue * 0.02;
 
     const displayedEntries = entries.slice(0, 5);
 
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
+            {/* --- NAVIGATION --- */}
             <nav className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/manager')}>
                     <img src="/elgan.jpeg" alt="ELGAN" className="h-10 w-auto rounded-lg shadow-sm" />
-                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase"></span>
+                    <span className="text-xl font-black text-[#0089A3] tracking-tighter uppercase">ELGAN HQ</span>
                 </div>
                 <div className="flex items-center space-x-6">
                     <div className="hidden sm:flex flex-col text-right border-r pr-6 border-slate-200">
@@ -102,6 +107,8 @@ const ManagerDashboard = () => {
             </nav>
 
             <main className="p-4 md:p-8 max-w-[1800px] mx-auto">
+                
+                {/* --- EXECUTIVE COMMAND BAR --- */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
                         <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center uppercase">
@@ -109,7 +116,6 @@ const ManagerDashboard = () => {
                         </h2>
                         <p className="text-slate-500 text-xs font-medium">Offshore Waste Management System.</p>
                     </div>
-                    {/* FIXED: Export Button now triggers handleExportCSV */}
                     <button 
                         onClick={handleExportCSV}
                         className="bg-slate-800 text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-95 flex items-center"
@@ -118,17 +124,18 @@ const ManagerDashboard = () => {
                     </button>
                 </div>
 
+                {/* --- ANALYTICS PANEL --- */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Gross Revenue</p>
-                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter">${totalRevenue.toLocaleString()}</h3>
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter">${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}</h3>
                     </div>
                     <div className="bg-[#0089A3] p-6 rounded-2xl shadow-xl shadow-cyan-100 text-white">
                         <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-2">Total 2% Assessor Fee</p>
                         <h3 className="text-3xl font-black tracking-tighter">${assessorFeeTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Tota Waste Volume</p>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Waste Volume</p>
                         <h3 className="text-3xl font-black text-orange-600 tracking-tighter">{totalVolume.toFixed(2)} m³</h3>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -137,7 +144,7 @@ const ManagerDashboard = () => {
                     </div>
                 </div>
 
-                {/* FILTERS */}
+                {/* --- FILTERS --- */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-8 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm items-end">
                     <div className="md:col-span-1">
                         <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-1">Asset Search</label>
@@ -171,6 +178,7 @@ const ManagerDashboard = () => {
                     </button>
                 </div>
 
+                {/* --- OPERATIONAL HISTORY TABLE (TOP 5) --- */}
                 <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-8 py-5 border-b border-slate-100 bg-slate-50/50 font-black text-slate-800 text-sm uppercase flex justify-between items-center">
                        <span>Operational History</span>
@@ -191,7 +199,7 @@ const ManagerDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {displayedEntries.map((entry) => (
+                                {displayedEntries.length > 0 ? displayedEntries.map((entry) => (
                                     <tr key={entry._id} className="hover:bg-cyan-50/20 transition-colors group text-xs font-bold uppercase text-slate-700">
                                         <td className="p-5 text-[#0089A3] font-black border-r border-slate-50">{entry.vesselName}</td>
                                         <td className="p-5 font-mono border-r border-slate-50">{entry.imoNumber}</td>
@@ -203,7 +211,6 @@ const ManagerDashboard = () => {
                                         <td className="p-5 text-right">
                                             <div className="flex justify-end gap-2">
                                                 <button onClick={() => handleViewDetails(entry)} className="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-[#0089A3] hover:text-white transition-all"><Eye size={16} /></button>
-                                                {/* FIXED: Static link path ensuring it calls the Backend Static Route */}
                                                 {entry.fileUrl && (
                                                     <a href={`${API_BASE_URL}/uploads/${entry.fileUrl}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-100 text-[#0089A3] rounded-lg hover:bg-[#0089A3] hover:text-white transition-all">
                                                         <FileText size={16} />
@@ -212,12 +219,15 @@ const ManagerDashboard = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
+                                )) : (
+                                    <tr><td colSpan="8" className="p-10 text-center text-slate-400 uppercase text-xs font-bold">No entries found.</td></tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
                 </div>
 
+                {/* --- FINANCIAL HISTORY TABLE --- */}
                 <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
                     <div className="px-8 py-5 border-b border-slate-100 bg-slate-900 flex items-center justify-between text-white">
                         <div className="flex items-center">
@@ -236,16 +246,18 @@ const ManagerDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs font-bold uppercase text-slate-700">
-                                {financials.map((fin) => (
+                                {financials.length > 0 ? financials.map((fin) => (
                                     <tr key={fin._id} className="hover:bg-slate-50 transition-colors">
                                         <td className="p-5">{fin.reportMonth}</td>
-                                        <td className="p-5">${Number(fin.totalIncome).toLocaleString()}</td>
+                                        <td className="p-5">${Number(fin.totalIncome).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                                         <td className="p-5 text-[#0089A3]">${Number(fin.assessorFee).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                                         <td className="p-5 text-right">
                                             <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[9px] font-black uppercase border border-emerald-100 tracking-widest">Verified</span>
                                         </td>
                                     </tr>
-                                ))}
+                                )) : (
+                                    <tr><td colSpan="4" className="p-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No records found.</td></tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -254,7 +266,7 @@ const ManagerDashboard = () => {
                 <p className="text-center mt-12 text-slate-300 text-[10px] font-black uppercase tracking-[0.4em]">© 2026 Elgan integrated Ltd.</p>
             </main>
 
-            {/* DETAILS MODAL */}
+            {/* --- DETAILS MODAL --- */}
             {showModal && selectedEntry && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
                     <div className="bg-white w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">

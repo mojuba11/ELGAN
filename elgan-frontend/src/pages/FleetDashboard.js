@@ -107,7 +107,7 @@ const FleetDashboard = () => {
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
                         <div className="p-4 bg-cyan-50 text-[#0089A3] rounded-xl"><Ship size={32} /></div>
                         <div>
-                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Vessels</p>
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Vessel Inspected</p>
                             <h3 className="text-3xl font-bold text-slate-800">{totalSubmissions}</h3>
                         </div>
                     </div>
